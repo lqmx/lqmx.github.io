@@ -6,27 +6,40 @@
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/style.css">
     <style>
-
+        .paper .title {
+            margin-top: 20px;
+            font-size: 20px;
+            text-align: center;
+        }
+        .paper .date {
+            float: right;
+            margin-top: 140px;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
-<div class="table">
-    <div class="paper" data-url="test"></div>
-</div>
+<div class="table"></div>
 <script src="dep/jquery.js"></script>
 <script>
     $(function () {
+        var papers = [{
+            title: '双向数据绑定',
+            date: '20180122'
+        }];
         var winHeight =$(document).height(),
             winWidth = $(document).width();
         var second = 0;
         var timer=null;
+        $.each(papers, function (k, v) {
+            $('.table').append('<div class="paper"><div class="title">' + v.title + '</div><diiv class="date">' + v.date + '</diiv></div>');
+        });
         $('.paper').each(function (k, v) {
             var style = {
                 left: (Math.random()*winWidth * 0.8).toFixed(2) + 'px',
                 top: (Math.random()*winHeight * 0.8).toFixed(2) + 'px',
                 transform:"rotate(" + (Math.random()*360).toFixed(0)+ "deg)"
             };
-            $(v).css(style);
             $(v).hover(function () {
                 timer=setInterval(function() {
                     if(++second > 1) {
@@ -43,6 +56,7 @@
             $(v).click(function () {
                 window.location.href = window.location.origin + "/note/" + $(v).attr('data-url');
             });
+            $(v).css(style).show();
         });
     });
 </script>

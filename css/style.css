@@ -15,8 +15,9 @@ body {
     box-shadow:2px 2px 3px #aaaaaa;
     border:1px solid #e6e6e6;
     position: absolute;
-    padding: 6px 10px;
+    padding: 10px 20px;
     cursor: pointer;
+    display: none;
 }
 .paper:hover{
     z-index: 2;
