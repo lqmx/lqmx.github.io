@@ -82,6 +82,7 @@ pre[class*=lang-] {
     font-size: 35px;
     font-weight: bold;
     text-align: center;
+    margin: 20px 0;
 }
 .content {
     padding: 20px;
