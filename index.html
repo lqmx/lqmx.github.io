@@ -25,14 +25,15 @@
     $(function () {
         var papers = [{
             title: '双向数据绑定',
-            date: '20180122'
+            date: '20180122',
+            url: 'test'
         }];
         var winHeight =$(document).height(),
             winWidth = $(document).width();
         var second = 0;
         var timer=null;
         $.each(papers, function (k, v) {
-            $('.table').append('<div class="paper"><div class="title">' + v.title + '</div><diiv class="date">' + v.date + '</diiv></div>');
+            $('.table').append('<div class="paper" data-url="'+ v.url + '"><div class="title">' + v.title + '</div><diiv class="date">' + v.date + '</diiv></div>');
         });
         $('.paper').each(function (k, v) {
             var style = {

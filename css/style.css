@@ -27,15 +27,19 @@ body {
 
 h1 {
     font-size: 32px;
-    margin: 0 0 4px 0;
+    margin: 18px 0 4px 0;
 }
 h2, #content h2 {
     font-size: 24px;
-    margin: 0 0 3px 0;
+    margin: 18px 0 3px 0;
 }
 h3, #content h3 {
     font-size: 18px;
-    margin: 0 0 2px 0;
+    margin: 18px 0 2px 0;
+}
+p {
+    font-size: 16px;
+    margin: 18px 0 10px 0;
 }
 blockquote {
     margin: 20px 0;
@@ -56,8 +60,8 @@ ol, ul {
     margin-left: 20px;
 }
 pre[class*=lang-] {
-    border-radius: 3px;
-    border: 1px dashed #ccc;
+    /*border-radius: 3px;*/
+    /*border: 1px dashed #ccc;*/
     word-wrap: normal;
     color: #fff;
     text-shadow: none;
@@ -86,4 +90,12 @@ pre[class*=lang-] {
     width: 84%;
     height: 90%;
     box-shadow: 0 0 50px 10px rgba(0, 0, 0, 0.3);
+}
+.date {
+    display: block;
+    margin: 10px;
+    float: right;
+}
+.clear {
+    clear: both;
 }
