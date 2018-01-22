@@ -3,49 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>lqmx</title>
-    <link rel="stylesheet" href="reset.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/style.css">
     <style>
-        body {
-            background: #ededed;
-        }
-        .table {
-            width: 90%;
-            height: 94%;
-            margin: 10px auto;
-            position: relative;
-        }
-        .paper {
-            z-index: 1;
-            width: 160px;
-            height: 200px;
-            background: #FFF;
-            box-shadow:2px 2px 3px #aaaaaa;
-            border:1px solid #e6e6e6;
-            position: absolute;
-            padding: 6px 10px;
-            cursor: pointer;
-        }
-        .paper:hover{
-            z-index: 2;
-            box-shadow:2px 2px 4px #aaaaaa;
-            transition: 0.5s;
-        }
+
     </style>
 </head>
 <body>
 <div class="table">
-    <div class="paper"></div>
-    <div class="paper"></div>
-    <div class="paper"></div>
-    <div class="paper"></div>
-    <div class="paper"></div>
-    <div class="paper"></div>
-    <div class="paper"></div>
-    <div class="paper"></div>
-    <div class="paper"></div>
-    <div class="paper"></div>
+    <div class="paper" data-url="test"></div>
 </div>
-<script src="jquery.js"></script>
+<script src="dep/jquery.js"></script>
 <script>
     $(function () {
         var winHeight =$(document).height(),
@@ -73,10 +41,9 @@
                 second = 0;
             });
             $(v).click(function () {
-
+                window.location.href = window.location.origin + "/note/" + $(v).attr('data-url');
             });
         });
-
     });
 </script>
 </body>

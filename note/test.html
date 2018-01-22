@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>双向数据绑定</title>
+</head>
+<body>
+<div class="content">
+    <div class="t">双向数据绑定</div>
+    <h1>数据劫持</h1>
+    <blockquote>不要被外表迷惑,现实只有一个</blockquote>
+    <pre class="lang-js">
+        function Dep() {
+            this.subs = [];
+            this.addSub = function (watcher) {
+                this.subs.push(watcher);
+            };
+            this.notify = function () {
+                this.subs.forEach(function (watcher) {
+                    watcher.update();
+                });
+            };
+        }
+        function Watcher(fn) {
+            this.update = function () {
+                Dep.target = this;
+                fn ();
+                Dep.target = null;
+            };
+            this.update();
+        }
+        function Observer(obj, key, value) {
+            var dep = new Dep();
+            if(Object.prototype.toString.call(value) === '[Object Object]') {
+                Object.keys(value).foreEach(function(key) {
+                    new Observer(value, key, value[key]);
+                });
+            }
+            Object.defineProperty(obj, key, {
+                enumerable: true,
+                configuration: true,
+                get: function () {
+                    if(Dep.target) {
+                        dep.addSub(Dep.target);
+                    }
+                    return value;
+                },
+                set: function (newValue) {
+                    value = newValue;
+                    dep.notify();
+                }
+            })
+        }
+        var book = {
+            no: 1,
+            name: 'book_name'
+        };
+        Object.keys(book).forEach(function (key) {
+            new Observer(book, key, book[key]);
+        });
+        new Watcher(function () {
+            document.querySelector('#test').innerHTML = book.name;
+        });
+    </pre>
+</div>
+</body>
+</html>
