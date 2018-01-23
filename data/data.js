@@ -1,0 +1,1 @@
+var notes=[{"date":"20180122","type":"web","url":"data_binding","title":"\u53cc\u5411\u6570\u636e\u7ed1\u5b9a"},{"date":"20180123","type":"web","url":"virtual_dom","title":"\u865a\u62dfDOM"}];

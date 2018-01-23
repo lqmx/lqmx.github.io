@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../css/reset.css?v1516715938">
+    <link rel="stylesheet" href="../css/md.css?v1516715938">
+<title></title>
+</head>
+<body>
+  <div class="md"><h1>虚拟DOM</h1>
+<h6>2018-01-23</h6>
+<h2>什么是虚拟DOM</h2>
+<p>轻量级的JavaScript对象</p>
+<p>(1) 提供一种方便的工具，使得开发效率得到保证</p>
+<p>(2) 保证最小化的DOM操作，使得执行效率得到保证</p>
+<p>Virtual DOM 本质上就是在JS和DOM之间做了一个缓存</p>
+<h3>用JS表示DOM结构</h3>
+<h3>比较两棵虚拟DOM树的差异</h3>
+<h4>如何比较两个两棵DOM树</h4>
+<p>对同级别节点进行比较的常用方法是深度优先遍历</p>
+<h4>如何记录节点之间的差异</h4>
+<ul>
+<li>修改节点属性, 用PROPS表示</li>
+<li>修改节点文本内容, 用TEXT表示</li>
+<li>替换原有节点, 用REPLACE表示</li>
+<li>调整子节点，包括移动、删除等，用REORDER表示</li>
+</ul>
+<h4>对真实DOM进行最小化修改</h4>
+<h2>虚拟DOM VS 直接操作原生DOM</h2>
+<p>innerHTML: render html string + 重新创建所有 DOM 元素</p>
+<p>Virtual DOM: render Virtual DOM + diff + 必要的 DOM 更新</p>
+<h2>虚拟DOM VS MVVM</h2>
+<p>脏检查：scope digest + 必要 DOM 更新</p>
+<p>依赖收集：重新收集依赖 + 必要 DOM 更新</p>
+<p>初始渲染：Virtual DOM &gt; 脏检查 &gt;= 依赖收集</p>
+<p>小量数据更新：依赖收集 &gt;&gt; Virtual DOM + 优化 &gt; 脏检查（无法优化） &gt; Virtual DOM 无优化</p>
+<p>大量数据更新：脏检查 + 优化 &gt;= 依赖收集 + 优化 &gt; Virtual DOM（无法/无需优化）&gt;&gt; MVVM 无优化</p>
+<h2>参考</h2>
+<p><a href="https://www.zhihu.com/question/29504639">如何理解虚拟DOM?</a></p>
+<p><a href="http://www.alloyteam.com/2015/10/react-virtual-analysis-of-the-dom/">React虚拟DOM浅析</a></p>
+<h6>2018-01-23</h6></div>
+</body>
+</html>

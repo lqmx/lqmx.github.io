@@ -1,0 +1,96 @@
+body {
+    background: #ededed;
+    font-size: 16px;
+}
+.md {
+    padding: 20px;
+    background: #ffffff;
+    margin: 80px auto;
+    width: 84%;
+    height: 90%;
+    box-shadow: 0 0 50px 10px rgba(0, 0, 0, 0.3);
+}
+.md h1 {
+    font-size: 35px;
+    font-weight: bold;
+    text-align: center;
+    margin: 20px 0;
+}
+.md h2 {
+    font-size: 28px;
+    margin: 18px 0 3px 0;
+    font-weight: bold;
+}
+.md h3 {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 18px 0 2px 0;
+}
+.md h4 {
+    font-size: 20px;
+    margin: 18px 0 2px 0;
+}
+
+.md h5 {
+    font-size: 18px;
+    margin: 18px 0 2px 0;
+}
+.md h6 {
+    font-size: 16px;
+    font-style: italic;
+    text-align: right;
+}
+.md p {
+    font-size: 16px;
+    margin: 18px 0 10px 0;
+}
+.md blockquote {
+    margin: 20px 0;
+    padding: 10px 21px;
+    border: none;
+    border-left: 5px solid #42a5f5;
+    color: #555;
+    font-size: 1em;
+    background: #f9f9f9;
+}
+.md li {
+    list-style: decimal;
+    margin: 5px 0;
+}
+.md ul li {
+    list-style: circle;
+}
+.md ol, ul {
+    margin: 10px 20px;
+}
+.md pre, pre[class*=lang-] {
+    word-wrap: normal;
+    color: #fff;
+    text-shadow: none;
+    font-family: Consolas,Monaco,'Andale Mono',monospace;
+    direction: ltr;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    tab-size: 4;
+    hyphens: none;
+    background: #4e4e4e;
+    padding: 1em;
+    overflow: auto;
+    margin: 1.2em 0!important;
+}
+
+.md img {
+    display: block;
+    max-width: 100%;
+}
+
+.md a {
+    color: #42a5f5;
+    text-decoration: none;
+}
+
+.md a:hover {
+    color: #43a8f9;
+}
