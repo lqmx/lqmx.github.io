@@ -1,6 +1,6 @@
 <?php
 
-include "config.php";
+$config = parse_ini_file("./config.ini");
 
 $v = time();
 $base = <<<HTML

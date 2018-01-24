@@ -1,7 +1,8 @@
 <?php
 
-include "config.php";
 include "../dep/Parsedown.php";
+
+$config = parse_ini_file("./config.ini");
 
 $parsedown = new Parsedown();
 $v = time();
