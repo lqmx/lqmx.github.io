@@ -52,4 +52,4 @@ else {
         echo $output.$url.".html", PHP_EOL;
     }
 }
-echo "DONE";
+echo "DONE", PHP_EOL;
