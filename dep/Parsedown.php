@@ -28,7 +28,7 @@ class Parsedown
 
     function text($text)
     {
-        $this->bqn = rand(1, 4);
+        $this->bqn = rand(1, 7);
 
         # make sure no definitions are set
         $this->DefinitionData = array();

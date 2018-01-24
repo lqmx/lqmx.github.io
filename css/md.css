@@ -104,11 +104,20 @@ body {
     border-left: 5px solid #42a5f5;
 }
 .md .bq2 {
-    border-left: 5px solid #60d060;
+    border-left: 5px solid #ae81ff;
 }
 .md .bq3 {
-    border-left: 5px solid #e5c500;
+    border-left: 5px solid #a6e22e;
 }
 .md .bq4 {
-    border-left: 5px solid #ed0039;
+    border-left: 5px solid #f92672;
+}
+.md .bq5 {
+    border-left: 5px solid #e6db74;
+}
+.md .bq6 {
+    border-left: 5px solid #75715e;
+}
+.md .bq7 {
+    border-left: 5px solid #292b36;
 }
