@@ -15,10 +15,13 @@ $base = <<<HTML
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="../css/reset.css?v$v">
     <link rel="stylesheet" href="../css/md.css?v$v">
+    <link rel="stylesheet" href="../dep/highlight/style/monokai_sublime.css?v$v">
 <title></title>
 </head>
 <body>
   <div class="md">%s</div>
+    <script src="../dep/highlight/highlight.min.js?v$v"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 </body>
 </html>
 HTML;
