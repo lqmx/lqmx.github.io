@@ -3,9 +3,6 @@ $(function () {
         winWidth = $(document).width();
     var second = 0;
     var timer=null;
-    $.each(notes, function (k, v) {
-        $('.table').append('<div class="paper" data-url="'+ v.url + '"><div class="title">' + v.title + '</div><diiv class="date">' + v.date + '</diiv></div>');
-    });
     $('.paper').each(function (k, v) {
         var style = {
             left: (Math.random()*winWidth * 0.8).toFixed(2) + 'px',

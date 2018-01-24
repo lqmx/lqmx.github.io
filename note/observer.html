@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+    <meta name="update_time" content="1516787180">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../css/reset.css?v1516787180">
+    <link rel="stylesheet" href="../css/md.css?v1516787180">
+<title></title>
+</head>
+<body>
+  <div class="md"><h1>观察者模式</h1>
+<h6>2018.01.23</h6>
+<blockquote>
+<p>定义对象间的一种一对多的依赖关系，当一个对象的状态发生改变时，
+所有依赖于它的对象都得到通知并被自动更新</p>
+</blockquote>
+<h2>观察者模式中主要角色</h2>
+<ul>
+<li>抽象主题（Subject）角色
+主题角色将所有对观察者对象的引用保存在一个集合中，每个主题可以有任意多个观察者</li>
+<li>抽象观察者（Observer）角色
+为所有的具体观察者定义一个接口，在观察的主题发生改变时更新自己</li>
+<li>具体主题（ConcreteSubject）角色
+存储相关状态到具体观察者对象，当具体主题的内部状态改变时，给所有登记过的观察者发出通知。</li>
+<li>具体观察者（ConcretedObserver）角色
+存储一个具体主题对象，存储相关状态，实现抽象观察者角色所要求的更新接口，
+以使得其自身状态和主题的状态保持一致</li>
+</ul>
+<h2>观察者模式的优点和缺点</h2>
+<h3>优点</h3>
+<ol>
+<li>观察者和主题之间的耦合度较小</li>
+<li>支持广播通信</li>
+</ol>
+<h3>缺点</h3>
+<p>由于观察者并不知道其它观察者的存在，它可能对改变目标的最终代价一无所知。这可能会引起意外的更新</p>
+<h2>观察者模式适用场景</h2>
+<ol>
+<li>当一个抽象模型有两个方面，其中一个方面依赖于另一个方面</li>
+<li>当对一个对象的改变需要同时改变其它对象，而不知道具体有多少个对象待改变</li>
+<li>当一个对象必须通知其它对象，而它又不能假定其它对象是谁</li>
+</ol>
+<h2>示例</h2>
+<pre><code class="language-php">&lt;?php
+interface Subject {
+    public function attach(Observer $observer);
+    public function detach(Observer $observer);
+    public function notify();
+}
+class ConcreteSubject implements Subject {
+    private $_observers;
+    public function __construct() {
+        $this-&gt;_observers = array();
+    }   
+    public function attach(Observer $observer) {
+        return $this-&gt;_observers[] = $observer;
+    }   
+    public function detach(Observer $observer) {
+        $index = array_search($observer, $this-&gt;_observers);
+        if($index === false) {
+            return false;
+        }   
+        unset($this-&gt;_observers[$index]);
+        return true;
+    }   
+    public function notify() {
+        foreach($this-&gt;_observers as $observer) {
+            $observer-&gt;update();
+        }   
+        return true;
+    }   
+}
+interface Observer {
+    public function update();
+}
+class ConcreteObserver implements Observer {
+    private $_name;
+    public function __construct($name) {
+        $this-&gt;_name = $name;
+    }   
+    public function update() {
+        echo $this-&gt;_name, PHP_EOL;
+    }
+}
+$subject = new ConcreteSubject();
+$subject-&gt;attach(new ConcreteObserver('l'));
+$subject-&gt;attach(new ConcreteObserver('q'));
+$subject-&gt;notify();</code></pre>
+<h2>参考</h2>
+<p><a href="http://blog.csdn.net/longjef/article/details/53004856">PHP设计模式之观察者模式(Observer)详细介绍和代码实例</a></p>
+<h6>2018.01.24</h6></div>
+</body>
+</html>

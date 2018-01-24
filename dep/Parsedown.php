@@ -1547,33 +1547,3 @@ class Parsedown
     );
 }
 
-$output = "../note/";
-$parsedown = new Parsedown();
-$v = time();
-$base = <<<HTML
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="../css/reset.css?v$v">
-    <link rel="stylesheet" href="../css/md.css?v$v">
-<title></title>
-</head>
-<body>
-  <div class="md">%s</div>
-</body>
-</html>
-HTML;
-
-$dir = "../data/md/";
-$mds = glob($dir."*.md");
-
-foreach ($mds as $md) {
-    list(, , $url, $filename) = explode('.', basename($md, '.md'));
-    $markdown = file_get_contents($md);
-    $html = $parsedown->text($markdown);
-    $html = sprintf($base, $html);
-    file_put_contents($output.$url.".html", $html);
-}

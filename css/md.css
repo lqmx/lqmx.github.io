@@ -65,7 +65,6 @@ body {
 }
 .md pre, pre[class*=lang-] {
     word-wrap: normal;
-    color: #fff;
     text-shadow: none;
     font-family: Consolas,Monaco,'Andale Mono',monospace;
     direction: ltr;
@@ -75,10 +74,16 @@ body {
     word-break: normal;
     tab-size: 4;
     hyphens: none;
-    background: #4e4e4e;
-    padding: 1em;
+    /*background: #4e4e4e;*/
+    /*padding: 1em;*/
     overflow: auto;
     margin: 1.2em 0!important;
+    background-color: #292b36;
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 6px;
+    position: relative;
+    /*margin: 10px 0 20px 0;*/
 }
 
 .md img {
@@ -93,4 +98,17 @@ body {
 
 .md a:hover {
     color: #43a8f9;
+}
+
+.md .bq1 {
+    border-left: 5px solid #42a5f5;
+}
+.md .bq2 {
+    border-left: 5px solid #60d060;
+}
+.md .bq3 {
+    border-left: 5px solid #e5c500;
+}
+.md .bq4 {
+    border-left: 5px solid #ed0039;
 }
