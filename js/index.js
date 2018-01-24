@@ -1,4 +1,5 @@
 $(function () {
+    var htmlDir = "/data/html/";
     var winHeight =$(document).height(),
         winWidth = $(document).width();
     var second = 0;
@@ -23,7 +24,7 @@ $(function () {
             second = 0;
         });
         $(v).click(function () {
-            window.location.href = window.location.origin + "/note/" + $(v).attr('data-url');
+            window.location.href = window.location.origin + htmlDir + $(v).attr('data-url');
         });
         $(v).css(style).show();
     });

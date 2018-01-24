@@ -1,5 +1,6 @@
 <?php
 
+include "config.php";
 
 $v = time();
 $base = <<<HTML
@@ -32,8 +33,7 @@ $paperDiv = <<<PAPER_DIV
 
 PAPER_DIV;
 
-$dir = "../data/md/";
-$files = glob($dir."*.md");
+$files = glob($config['md_dir']."*.md");
 $papers = "";
 
 foreach ($files as $file) {
