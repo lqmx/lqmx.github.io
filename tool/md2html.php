@@ -16,7 +16,7 @@ $base = <<<HTML
     <link rel="stylesheet" href="../css/reset.css?v$v">
     <link rel="stylesheet" href="../css/md.css?v$v">
     <link rel="stylesheet" href="../dep/highlight/style/monokai_sublime.css?v$v">
-<title></title>
+<title>%s</title>
 </head>
 <body>
   <div class="md">%s</div>
@@ -36,7 +36,7 @@ if($argc >=2 ) {
         if($type == 'ing') continue;
         $markdown = file_get_contents($dir.$md);
         $html = $parsedown->text($markdown);
-        $html = sprintf($base, $html);
+        $html = sprintf($base, $filename, $html);
         file_put_contents($output.$url.".html", $html);
         echo $output.$url.".html", PHP_EOL;
     }
@@ -50,7 +50,7 @@ else {
         }
         $markdown = file_get_contents($md);
         $html = $parsedown->text($markdown);
-        $html = sprintf($base, $html);
+        $html = sprintf($base, $filename, $html);
         file_put_contents($output.$url.".html", $html);
         echo $output.$url.".html", PHP_EOL;
     }
