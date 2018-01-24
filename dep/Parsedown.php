@@ -20,9 +20,16 @@ class Parsedown
     const version = '1.6.0';
 
     # ~
+    protected $bqn;
+
+    public function __construct() {
+
+    }
 
     function text($text)
     {
+        $this->bqn = rand(1, 4);
+
         # make sure no definitions are set
         $this->DefinitionData = array();
 
@@ -607,6 +614,9 @@ class Parsedown
                     'name' => 'blockquote',
                     'handler' => 'lines',
                     'text' => (array) $matches[1],
+                    'attributes' => array(
+                        'class' => 'bq' . $this->bqn,
+                    )
                 ),
             );
 
