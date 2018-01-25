@@ -1,9 +1,7 @@
 $(function () {
     var htmlDir = "/data/html/";
-    var winHeight =$(document).height(),
-        winWidth = $(document).width();
-    var second = 0;
-    var timer=null;
+    var winHeight =$(document).height(), winWidth = $(document).width();
+    var timer=null, second = 0;
     var Drag = {
         isDrag: false,
         offsetX: 0,
@@ -44,9 +42,8 @@ $(function () {
             Drag.dragDiv.css('left', this.aX + 'px');
         },
     };
-    var PAPER_STATE_DRAG = 0;
-    var PAPER_STATE_CLICK = 1;
-    var paperState = 0;
+    var PAPER_STATE_DRAG = 0, PAPER_STATE_CLICK = 1, paperState = PAPER_STATE_DRAG;
+
     $('.paper').each(function (k, v) {
         var transformStyle = "rotate(" + (Math.random()*360).toFixed(0)+ "deg)";
         $(v).hover(function () {
@@ -77,4 +74,30 @@ $(function () {
             transform:transformStyle
         }).show();
     });
+    CmdBar.init([{
+        cmd: "draw",
+        des: 'show the draw board',
+        handle: function () {
+            var canvas = $('.draw-board');
+            canvas.show();
+            canvas[0].width = $(document).width();
+            canvas[0].height =$(document).height();
+            var ctx = canvas[0].getContext("2d");
+            ctx.strokeStyle = 'red';
+            canvas.show();
+            canvas.mousedown(function (ev) {
+                ctx.beginPath();
+                ctx.moveTo(ev.clientX - this.offsetLeft, ev.clientY - this.offsetTop);
+                $(document).mousemove(function (ev) {
+                    ctx.lineTo(ev.clientX - canvas[0].offsetLeft, ev.clientY - canvas[0].offsetTop);
+                    ctx.stroke();
+                });
+                $(document).mouseup(function (ev) {
+                    $(document).off('mousemove');
+                    $(document).off('mouseup');
+                    ctx.closePath();
+                });
+            });
+        }
+    }])
 });

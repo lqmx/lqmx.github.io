@@ -14,12 +14,15 @@ $base = <<<HTML
     <title>lazy note</title>
     <link rel="stylesheet" href="css/reset.css?v$v">
     <link rel="stylesheet" href="css/style.css?v$v">
+     <link rel="stylesheet" href="js/cmdbar/style/cmd_bar.css?v$v">
 </head>
 <body>
 <div class="table">
 %s
 </div>
+<canvas class="draw-board"><span>浏览器不支持canvas</span></canvas>
 <script src="dep/jquery.js?v$v"></script>
+<script src="js/cmdbar/CmdBar.js?v$v"></script>
 <script src="js/index.js?v$v"></script>
 </body>
 </html>
