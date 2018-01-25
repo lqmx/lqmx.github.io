@@ -18,6 +18,7 @@ body {
     padding: 10px 20px;
     cursor: pointer;
     display: none;
+    user-select: none;
 }
 .paper:hover{
     z-index: 2;
