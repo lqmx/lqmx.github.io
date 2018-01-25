@@ -6,6 +6,7 @@
     position: absolute;
     left: 0;
     top: 0;
+    z-index: 6666;
 }
 .cmd-bar input {
     border: 0;

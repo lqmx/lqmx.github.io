@@ -1,10 +1,5 @@
 var CmdBar = (function () {
-    var params = {},
-        tpl = '<div class="cmd-bar"> ' +
-            '<input type="text">' +
-            '<ul></ul> ' +
-            '<div class="tip"></div>' +
-            '</div>';
+    var tpl = '<div class="cmd-bar"><input type="text"><ul></ul><div class="tip"></div></div>';
 
     var self = this;
     self.$cmdBar = null;
@@ -13,6 +8,7 @@ var CmdBar = (function () {
     self.$list = null;
     self.cmds = [];
     self.cmd = "";
+    self.keyEvt = {};
 
     function log(msg) {
         console.log(msg);
@@ -32,26 +28,31 @@ var CmdBar = (function () {
         self.$tip = $cmdBar.find('.tip');
         self.$list = $cmdBar.find('ul');
         self.cmdMap = {};
+        self.shortcutMap = {};
         $.each(self.cmds, function (k, v) {
-            self.$list.append('<li class="clear"><span>' + v.cmd + '</span><span class="des ">' + v.des + '</span></li>');
+            self.$list.append('<li class="clear"><span>' + v.cmd + '</span><span>' + v.shortcut + '</span><span class="des ">' + v.des + '</span></li>');
             self.cmdMap[v.cmd] = k;
+            self.shortcutMap[v.shortcut.toLowerCase()] = k;
         });
     }
     function _initEvt() {
         self.$input.keyup(function (event) {
-            var val = $(this).val();
+            var val = $(this).val().toLowerCase();
             if (val === '' || val.length < 1) {
                 hide();
                 return true;
             }
             self.cmd = val.substr(1);
             if (event.key === 'Enter') {
-                if(self.cmdMap[self.cmd] === undefined) {
+                if(self.cmdMap[self.cmd] !== void 666) {
+                    self.cmds[self.cmdMap[self.cmd]]['handle']();
+                    hide();
+                } else if (self.shortcutMap[self.cmd] !== void 666) {
+                    self.cmds[self.shortcutMap[self.cmd]]['handle']();
+                    hide();
+                } else {
                     undefinedCmd();
-                    return true;
                 }
-                hide();
-                var result = self.cmds[self.cmdMap[self.cmd]]['handle']();
             }
             self.$list.find('li').each(function (k, v) {
                 if (self.cmd === ''
@@ -62,18 +63,41 @@ var CmdBar = (function () {
                 }
             });
         });
+
+        bindKey('Escape', function () {
+           hide();
+        });
+
         $(document).keydown(function(event){
+            var key = event.key;
             if(event.target === document.body
                 && event.shiftKey
-                && event.key === ':') {
-                CmdBar.show();
+                && key === ':') {
+                show();
             }
-            if(event.key === 'Escape') {
-                $('.draw-board').hide();
-                CmdBar.hide();
+            if(key === 'Escape') {
+                if(self.keyEvt[key].length > 0) {
+                    $.each(self.keyEvt[key], function (k, v) {
+                        v();
+                    });
+                }
             }
         });
     }
+
+    function bindKey(key, fn) {
+        if(self.keyEvt[key] === void 666) {
+            self.keyEvt[key] = [];
+        }
+        var bolExist = false;
+        $.each(self.keyEvt[key], function (k, v) {
+            if(v === fn) bolExist = true;
+        });
+        if(!bolExist) {
+            self.keyEvt[key].push(fn);
+        }
+    }
+
     function hide() {
         self.$input.val('');
         self.$cmdBar.hide();
@@ -85,7 +109,7 @@ var CmdBar = (function () {
     }
 
     function show(isShowList) {
-        if(isShowList === undefined) {
+        if(isShowList === void 666) {
             isShowList = true;
         }
         if(isShowList) {
@@ -103,6 +127,8 @@ var CmdBar = (function () {
     }
 
     return {
+        keyEvt: self.keyEvt,
+        bindKey: bindKey,
         init: init,
         show: show,
         hide: hide

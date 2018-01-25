@@ -13,14 +13,23 @@ $base = <<<HTML
 <meta charset="UTF-8">
     <meta name="update_time" content="$v">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>%s</title>
     <link rel="stylesheet" href="../../css/reset.css?v$v">
     <link rel="stylesheet" href="../../css/md.css?v$v">
+    <link rel="stylesheet" href="../../js/drawboard/draw_board.css?v$v">
+    <link rel="stylesheet" href="../../js/cmdbar/cmd_bar.css?v$v">
+    <link rel="stylesheet" href="../../js/note/note.css?v$v">
     <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v$v">
-<title>%s</title>
 </head>
 <body>
-  <div class="md">%s</div>
+    <div class="md">%s</div>
+    <script src="../../dep/jquery.js?v$v"></script>
+    <script src="../../js/drawboard/Drawboard.js?v$v"></script>
+    <script src="../../js/cmdbar/CmdBar.js?v$v"></script>
+    <script src="../../js/drag/Drag.js?v$v"></script>
+    <script src="../../js/note/Note.js?v$v"></script>
+    <script src="../../js/html.js?v$v"></script>
     <script src="../../dep/highlight/highlight.min.js?v$v"></script>
     <script>hljs.initHighlightingOnLoad();</script>
 </body>
