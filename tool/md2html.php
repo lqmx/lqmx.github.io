@@ -25,7 +25,7 @@ $base = <<<HTML
 <body>
     <div class="md">%s</div>
     <script src="../../dep/jquery.js?v$v"></script>
-    <script src="../../js/drawboard/Drawboard.js?v$v"></script>
+    <script src="../../js/drawboard/DrawBoard.js?v$v"></script>
     <script src="../../js/cmdbar/CmdBar.js?v$v"></script>
     <script src="../../js/drag/Drag.js?v$v"></script>
     <script src="../../js/note/Note.js?v$v"></script>
