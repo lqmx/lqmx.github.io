@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+    <meta name="update_time" content="1516981319">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>策略模式</title>
+    <link rel="stylesheet" href="../../css/reset.css?v1516981319">
+    <link rel="stylesheet" href="../../css/md.css?v1516981319">
+    <link rel="stylesheet" href="../../js/drawboard/draw_board.css?v1516981319">
+    <link rel="stylesheet" href="../../js/cmdbar/cmd_bar.css?v1516981319">
+    <link rel="stylesheet" href="../../js/note/note.css?v1516981319">
+    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1516981319">
+</head>
+<body>
+    <div class="md"><h1>策略模式</h1>
+<h6>2018.01.26</h6>
+<blockquote class="bq7">
+<p>策略模式是对象的行为模式，用意是对一组算法的封装。动态的选择需要的算法并使用。</p>
+</blockquote>
+<h2>策略模式中的角色</h2>
+<ul>
+<li>抽象策略模式 Strategy</li>
+<li>具体策略模式 ConcreteStrategy</li>
+<li>环境角色 Context</li>
+</ul>
+<h2>使用场景</h2>
+<ul>
+<li>许多相关的类仅仅是行为有异。“策略”提供了一种用多个行为中的一个行为来配置一个类的方法</li>
+<li>需要使用一个算法的不同变体</li>
+<li>算法使用客户不应该知道的数据。可使用策略模式以避免暴露复杂的，与算法相关的数据结构</li>
+<li>一个类定义了多种行为，并且 这些行为在这个类的操作中以多个形式出现。将相关的条件分支移和它们各自的Strategy类中以代替这些条件语句</li>
+</ul>
+<h2>实例</h2>
+<pre><code class="language-php">&lt;?php
+
+interface Strategy {
+    public function algorithmInterface();
+}
+
+class ConcreteStrategyA implements Strategy {
+    public function algorithmInterface() {
+        echo 'A', PHP_EOL;
+    }
+}
+
+class ConcreteStrategyB implements Strategy {
+    public function algorithmInterface() {
+        echo 'B', PHP_EOL;
+    }
+}
+
+class Context {
+    private $_strategy;
+    public function __construct(Strategy $strategy) {
+        $this-&gt;_strategy = $strategy;
+    }
+    public function contextInterface() {
+        $this-&gt;_strategy-&gt;algorithmInterface();
+    }
+}
+
+$contextA = new Context(new ConcreteStrategyA());
+$contextA-&gt;contextInterface();
+
+$contextB = new Context(new ConcreteStrategyB());
+$contextB-&gt;contextInterface();</code></pre>
+<h2>优点和缺点</h2>
+<h3>优点</h3>
+<ul>
+<li>策略模式提供了管理相关的算法族的办法</li>
+<li>策略模式提供了可以替换继承关系的办法 将算封闭在独立的Strategy类中使得你可以独立于其Context改变它</li>
+<li>使用策略模式可以避免使用多重条件转移语句</li>
+</ul>
+<h3>缺点</h3>
+<ul>
+<li>客户必须了解所有的策略 这是策略模式一个潜在的缺点</li>
+<li>Strategy和Context之间的通信开销</li>
+<li>策略模式会造成很多的策略类</li>
+</ul>
+<h2>参考</h2>
+<p><a href="http://www.jb51.net/article/76001.htm">学习php设计模式 php实现策略模式(strategy)</a></p>
+<h6>2018.01.26</h6></div>
+    <script src="../../dep/jquery.js?v1516981319"></script>
+    <script src="../../js/drawboard/DrawBoard.js?v1516981319"></script>
+    <script src="../../js/cmdbar/CmdBar.js?v1516981319"></script>
+    <script src="../../js/drag/Drag.js?v1516981319"></script>
+    <script src="../../js/note/Note.js?v1516981319"></script>
+    <script src="../../js/html.js?v1516981319"></script>
+    <script src="../../dep/highlight/highlight.min.js?v1516981319"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
