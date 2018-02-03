@@ -1,6 +1,7 @@
 body {
     background: #ededed;
-    font-size: 16px;
+    font-size: 14px;
+    line-height: 24px;
 }
 .md {
     padding: 20px;
@@ -41,7 +42,7 @@ body {
     text-align: right;
 }
 .md p {
-    font-size: 16px;
+    font-size: 14px;
     margin: 18px 0 10px 0;
 }
 .md blockquote {

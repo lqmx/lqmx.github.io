@@ -42,7 +42,7 @@ if($argc >=2 ) {
     foreach ($files as $md) {
         list(, $type, $url, $filename) = explode('.', basename($md, '.md'));
         if($type == 'ing') continue;
-        $markdown = file_get_contents($config['md_dir'].$md);
+        $markdown = file_get_contents($config['md_dir'].$md.".md");
         $html = $parsedown->text($markdown);
         $html = sprintf($base, $filename, $html);
         file_put_contents($config['html_dir'].$url.".html", $html);
