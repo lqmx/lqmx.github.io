@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>catalog</title>
+    <style>
+        .catalog {
+            width: 200px;
+            height:auto;
+            background: #1c1c1c;
+            color: #fff2b8;
+            position: fixed;
+            top: 100px;
+            right: 50px;
+        }
+    </style>
+</head>
+<body>
+<div class="md">
+<h2>一级标题1</h2>
+这行代码设置所有字体为系统默认的无称线字体。如果在各种操作系统和浏览器都做对的情况下，它应该对中英文使用默认的无称线字体。即大多数情况下英文显示『Arial』或『Helvatica』，中文显示『黑体』或『微软雅黑』，日文显示『哥特体』。当然，也可以设置font-family: serif。那么相应的就是『Times』、『宋体』和『明朝』。
+<h3>二级标题1</h3>
+这行代码设置所有字体为系统默认的无称线字体。如果在各种操作系统和浏览器都做对的情况下，它应该对中英文使用默认的无称线字体。即大多数情况下英文显示『Arial』或『Helvatica』，中文显示『黑体』或『微软雅黑』，日文显示『哥特体』。当然，也可以设置font-family: serif。那么相应的就是『Times』、『宋体』和『明朝』。
+<h3>二级标题2</h3>
+这行代码设置所有字体为系统默认的无称线字体。如果在各种操作系统和浏览器都做对的情况下，它应该对中英文使用默认的无称线字体。即大多数情况下英文显示『Arial』或『Helvatica』，中文显示『黑体』或『微软雅黑』，日文显示『哥特体』。当然，也可以设置font-family: serif。那么相应的就是『Times』、『宋体』和『明朝』。
+<h4>三级标题1</h4>
+这行代码设置所有字体为系统默认的无称线字体。如果在各种操作系统和浏览器都做对的情况下，它应该对中英文使用默认的无称线字体。即大多数情况下英文显示『Arial』或『Helvatica』，中文显示『黑体』或『微软雅黑』，日文显示『哥特体』。当然，也可以设置font-family: serif。那么相应的就是『Times』、『宋体』和『明朝』。
+<h4>三级标题2</h4>
+这行代码设置所有字体为系统默认的无称线字体。如果在各种操作系统和浏览器都做对的情况下，它应该对中英文使用默认的无称线字体。即大多数情况下英文显示『Arial』或『Helvatica』，中文显示『黑体』或『微软雅黑』，日文显示『哥特体』。当然，也可以设置font-family: serif。那么相应的就是『Times』、『宋体』和『明朝』。
+<h5>四级标题1</h5>
+<h5>四级标题2</h5>
+<h4>三级标题3</h4>
+这行代码设置所有字体为系统默认的无称线字体。如果在各种操作系统和浏览器都做对的情况下，它应该对中英文使用默认的无称线字体。即大多数情况下英文显示『Arial』或『Helvatica』，中文显示『黑体』或『微软雅黑』，日文显示『哥特体』。当然，也可以设置font-family: serif。那么相应的就是『Times』、『宋体』和『明朝』。
+<h3>二级标题3</h3>
+<h3>二级标题4</h3>
+
+<h2>一级标题2</h2>
+这行代码设置所有字体为系统默认的无称线字体。如果在各种操作系统和浏览器都做对的情况下，它应该对中英文使用默认的无称线字体。即大多数情况下英文显示『Arial』或『Helvatica』，中文显示『黑体』或『微软雅黑』，日文显示『哥特体』。当然，也可以设置font-family: serif。那么相应的就是『Times』、『宋体』和『明朝』。
+<h2>一级标题3</h2>
+<h2>一级标题4</h2>
+这行代码设置所有字体为系统默认的无称线字体。如果在各种操作系统和浏览器都做对的情况下，它应该对中英文使用默认的无称线字体。即大多数情况下英文显示『Arial』或『Helvatica』，中文显示『黑体』或『微软雅黑』，日文显示『哥特体』。当然，也可以设置font-family: serif。那么相应的就是『Times』、『宋体』和『明朝』。
+<h2>一级标题5</h2>
+<h3>二级标题1</h3>
+<h3>二级标题2</h3>
+</div>
+
+<script src="jquery.min.js"></script>
+<script>
+    var Catalog = (function () {
+
+        var catalog_tpl = '<div class="catalog"></div>';
+        var self = this;
+
+        var $catalog = null;
+
+        function init() {
+            $(document.body).append(catalog_tpl);
+            $catalog = $('.catalog');
+            $catalog.append('<dl></dl>');
+            var h2Index = 0, h3Index = 0;
+            $('.md').children().each(function (k, v) {
+                if(v.nodeName === 'H2') {
+                    $catalog.find('dl').append('<dt data-index="' + (h2Index++) + '">' + $(v).text() + '</dt>');
+                }
+                if(v.nodeName === 'H3'){
+                    $catalog.find('dl').append('<dd data-index="' + (h3Index++) + '">' + $(v).text() + '</dd>');
+                }
+            });
+            $catalog.find('dt').click(function () {
+                var h2 = $('.md').find('h2').eq($(this).attr('data-index'));
+                console.log(h2.offset());
+                $("body").animate({ scrollTop: h2.offset().top }, 0.5);
+            });
+            $catalog.find('dd').click(function () {
+                console.log($('.md').find('h3').eq($(this).attr('data-index')).text());
+            });
+        }
+        function open() {
+
+        }
+        function close() {
+
+        }
+        return {
+            init: init,
+            open: open,
+            close: close
+        }
+    })();
+
+    Catalog.init();
+</script>
+</body>
+</html>
