@@ -23,4 +23,16 @@ $(function () {
             Drag.bind(Note.getEl());
         }
     }]);
+
+    Catalog.init();
+    Catalog.hide();
+    KeyBoard.bind('Ctrl-C', function () {
+        if(Catalog.isShow()) {
+            Catalog.hide();
+        } else {
+            Catalog.show();
+        }
+    });
+
+    KeyBoard.listen();
 });

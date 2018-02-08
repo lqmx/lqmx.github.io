@@ -18,16 +18,21 @@ $base = <<<HTML
     <link rel="stylesheet" href="../../css/reset.css?v$v">
     <link rel="stylesheet" href="../../css/md.css?v$v">
     <link rel="stylesheet" href="../../js/drawboard/draw_board.css?v$v">
+    <link rel="stylesheet" href="../../js/catalog/catalog.css?v$v">
     <link rel="stylesheet" href="../../js/cmdbar/cmd_bar.css?v$v">
+    <link rel="stylesheet" href="../../js/catalog/catalog.css?v$v">
     <link rel="stylesheet" href="../../js/note/note.css?v$v">
     <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v$v">
 </head>
 <body>
     <div class="md">%s</div>
     <script src="../../dep/jquery.js?v$v"></script>
+    <script src="../../js/comm/keyevent.js?v$v"></script>
+    <script src="../../js/catalog/Catalog.js?v$v"></script>
     <script src="../../js/drawboard/DrawBoard.js?v$v"></script>
     <script src="../../js/cmdbar/CmdBar.js?v$v"></script>
     <script src="../../js/drag/Drag.js?v$v"></script>
+    <script src="../../js/catalog/Catalog.js?v$v"></script>
     <script src="../../js/note/Note.js?v$v"></script>
     <script src="../../js/html.js?v$v"></script>
     <script src="../../dep/highlight/highlight.min.js?v$v"></script>

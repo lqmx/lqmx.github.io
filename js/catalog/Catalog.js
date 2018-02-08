@@ -4,11 +4,12 @@ var Catalog = (function () {
     var self = this;
 
     var $catalog = $('.catalog');
+    self.isShow = false;
 
     function init() {
         if($catalog.length > 0){
-            open();
-            return true;
+            show();
+            return self;
         }
 
         $(document.body).append(catalog_tpl);
@@ -25,24 +26,32 @@ var Catalog = (function () {
         });
         $catalog.find('dt').click(function () {
             var h2 = $('.md').find('h2').eq($(this).attr('data-index'));
-            console.log(h2.offset().top);
             $("html,body").animate({ scrollTop: h2.offset().top - 10 }, 2);
         });
         $catalog.find('dd').click(function () {
             var h3 = $('.md').find('h3').eq($(this).attr('data-index'));
-            console.log(h3.offset().top);
             $("html,body").animate({ scrollTop: h3.offset().top - 10 }, 2);
         });
+        return self;
     }
-    function open() {
+    function show() {
         $catalog.show();
+        self.isShow = true;
+        return self;
     }
-    function close() {
+    function hide() {
         $catalog.hide();
+        self.isShow = false;
+        return self;
+    }
+
+    function isShow() {
+        return self.isShow;
     }
     return {
+        isShow: isShow,
         init: init,
-        open: open,
-        close: close
+        show: show,
+        hide: hide
     }
 })();

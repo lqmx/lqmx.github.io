@@ -68,21 +68,31 @@ var CmdBar = (function () {
            hide();
         });
 
-        $(document).keydown(function(event){
-            var key = event.key;
-            if(event.target === document.body
-                && event.shiftKey
-                && key === ':') {
-                show();
-            }
-            if(key === 'Escape') {
-                if(self.keyEvt[key].length > 0) {
-                    $.each(self.keyEvt[key], function (k, v) {
-                        v();
-                    });
-                }
+        KeyBoard.bind("Shift-:", function () {
+            show();
+        });
+        KeyBoard.bind("Escape", function () {
+            if(self.keyEvt['Escape'].length > 0) {
+                $.each(self.keyEvt['Escape'], function (k, v) {
+                    v();
+                });
             }
         });
+        // $(document).keydown(function(event){
+        //     var key = event.key;
+        //     if(event.target === document.body
+        //         && event.shiftKey
+        //         && key === ':') {
+        //         show();
+        //     }
+        //     if(key === 'Escape') {
+        //         if(self.keyEvt[key].length > 0) {
+        //             $.each(self.keyEvt[key], function (k, v) {
+        //                 v();
+        //             });
+        //         }
+        //     }
+        // });
     }
 
     function bindKey(key, fn) {

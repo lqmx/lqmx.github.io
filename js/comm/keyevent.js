@@ -1,24 +1,23 @@
-var Key = function (name, str, fn) {
+var Key = function (str, detail) {
     var key = {
-        name: name,
         key: '',
         shift: false,
         ctrl: false,
         alt:  false,
-        fn: fn
+        target: detail.target,
+        fn: detail.fn
     };
     var arr = str.split('-');
     for(var i = 0; i < arr.length; i++) {
-        if(arr[i] === 'Ctrl') {
-            key.ctrl = true;
-        }
-        else if(arr[i] === 'Shift') {
-            key.shift = true;
-        }
-        else if (arr[i] === 'Alt'){
-            key.alt = true;
-        } else {
-            key.key = arr[i].toLowerCase();
+        var v = arr[i].toLowerCase();
+        switch (v){
+            case 'ctrl':
+            case 'shift':
+            case 'alt':
+                key[v] = true;
+                break;
+            default:
+                key.key = v;
         }
     }
     return key;
@@ -29,24 +28,30 @@ var KeyBoard = (function () {
     var self = this;
     var keys = {};
 
-    function bind(key) {
-        if(keys[key.name] === void 666) {
-            keys[key.name] = key;
+    function bind(key, fn, target) {
+        if(keys[key] === void 666) {
+            keys[key] = {
+                fn: [],
+                target: target === void 666 ? document.body : target
+            };
         }
+        keys[key].fn.push(fn);
     }
 
     function listen() {
         $(document).keydown(function(event){
             $.each(keys, function (k, v) {
-                var key = new Key(v.name, v.key, v.fn);
+                var key = new Key(k, v);
                 var ctrl, shift, alt;
                 ctrl = key.ctrl?event.ctrlKey:true;
                 shift = key.shift?event.shiftKey:true;
                 alt = key.alt?event.altKey:true;
-                if(event.target === document.body
-                    && event.key === key.key
-                    && ctrl && shift &&alt){
-                    v.fn();
+                if(
+                    event.target === key.target
+                    && event.key.toLowerCase() === key.key
+                    && ctrl && shift && alt
+                ){
+                    for(var i =0; i < key.fn.length; i ++) key.fn[i]();
                 }
             });
         });
