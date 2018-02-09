@@ -42,7 +42,7 @@ $files[] = $readme.".md";
 foreach ($files as $file) {
     $filename = basename($file, '.md');
     if($filename == $readme) {
-        $date = date("Y.m.d", time());
+        $date = date("Ymd", time());
         $title = $readme;
         $url = $readme;
     }
