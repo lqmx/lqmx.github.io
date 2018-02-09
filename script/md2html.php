@@ -55,10 +55,16 @@ if($argc >=2 ) {
 }
 else {
     $mds = glob($config['md_dir']."*.md");
+    $readme = "../README.md";
+    $mds[] = "../README.md";
     foreach ($mds as $md) {
-        list(, $type, $url, $filename) = explode('.', basename($md, '.md'));
-        if($type == 'ing') {
-            continue;
+        if($md != $readme) {
+            list(, $type, $url, $filename) = explode('.', basename($md, '.md'));
+            if($type == 'ing') {
+                continue;
+            }
+        } else {
+            $url = $filename = "README";
         }
         $markdown = file_get_contents($md);
         $html = $parsedown->text($markdown);

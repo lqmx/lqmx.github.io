@@ -25,10 +25,12 @@ var Catalog = (function () {
             }
         });
         $catalog.find('dt').click(function () {
+            $(this).addClass('active').siblings().removeClass('active');
             var h2 = $('.md').find('h2').eq($(this).attr('data-index'));
             $("html,body").animate({ scrollTop: h2.offset().top - 10 }, 2);
         });
         $catalog.find('dd').click(function () {
+            $(this).addClass('active').siblings().removeClass('active');
             var h3 = $('.md').find('h3').eq($(this).attr('data-index'));
             $("html,body").animate({ scrollTop: h3.offset().top - 10 }, 2);
         });
