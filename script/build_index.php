@@ -37,10 +37,20 @@ PAPER_DIV;
 $files = glob($config['md_dir']."*.md");
 $papers = "";
 
+$readme = "README";
+$files[] = $readme.".md";
 foreach ($files as $file) {
     $filename = basename($file, '.md');
-    list($date, $type, $url, $title) = explode('.', $filename);
-    if($type == 'ing') continue;
+    if($filename == $readme) {
+        $date = date("Y.m.d", time());
+        $title = $readme;
+        $url = $readme;
+    }
+    else {
+        list($date, $type, $url, $title) = explode ('.', $filename);
+        if($type == 'ing')
+            continue;
+    }
     echo $file, PHP_EOL;
     $papers .= sprintf($paperDiv, $url, $title, $date);
 }
