@@ -40,7 +40,9 @@ $papers = "";
 foreach ($files as $file) {
     $filename = basename($file, '.md');
     list($date, $type, $url, $title) = explode('.', $filename);
-    $papers .= sprintf($paperDiv, $url, $title, $date);;
+    if($type == 'ing') continue;
+    echo $file, PHP_EOL;
+    $papers .= sprintf($paperDiv, $url, $title, $date);
 }
 
 $html = sprintf($base, $papers);

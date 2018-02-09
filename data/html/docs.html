@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+    <meta name="update_time" content="1518060187">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PHP开发手册</title>
+    <link rel="stylesheet" href="../../css/reset.css?v1518060187">
+    <link rel="stylesheet" href="../../css/md.css?v1518060187">
+    <link rel="stylesheet" href="../../js/drawboard/draw_board.css?v1518060187">
+    <link rel="stylesheet" href="../../js/catalog/catalog.css?v1518060187">
+    <link rel="stylesheet" href="../../js/cmdbar/cmd_bar.css?v1518060187">
+    <link rel="stylesheet" href="../../js/catalog/catalog.css?v1518060187">
+    <link rel="stylesheet" href="../../js/note/note.css?v1518060187">
+    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1518060187">
+</head>
+<body>
+    <div class="md"><h1>PHP 开发手册</h1>
+<h6>2018.01.30</h6>
+<h2>变量与类型相关扩展</h2>
+<h3>数组</h3>
+<h4>预定义常量</h4>
+<pre><code class="language-php">CASE_LOWER, CASE_UPPER
+SORT_ASC, SORT_DESC
+SORT_REGULAR, SORT_NUMERIC, SORT_STRING,SORT_LOCALE_STRING
+COUNT_NORMAL, COUNT_RECURSIVE
+EXTR_OVERWRITE, EXTR_SKIP, EXTR_PREFIX_SAME, EXTR_PREFIX_ALL, 
+EXTR_PREFIX_INVALID, EXTR_PREFIX_IF_EXISTS, EXTR_IF_EXISTS, EXTR_REFS</code></pre>
+<h4>对数组进行排序</h4>
+<p><code>shuffle</code>: 随机排序</p>
+<h4>数组函数</h4>
+<pre><code class="language-php">array array_change_key_case(array $array[, int $case=CASE_LOWER]);
+array array_chunk(array $array, int $size[, bool $preserve_keys = false]);
+array array_column(array $input, mixed $column_key[,mixed $index_key = null]);
+array array_combine(array $key, array $value);
+array array_count_values(array $array);
+array array_diff_assoc(array $array1, array $array2[, array $...]);
+array array_diff_key(array $array1, array $array2[, array $..]);
+array array_diff_uassoc(array $array1, array $array2[, array $...], callable $key_compare_func);
+array array_diff_ukey(array $array1, array $array2[, array $...], callable $key_compare_func);
+array array_diff(array $array1, array $array2[, array $...]);
+array array_fill_keys(array $keys, mixed $value);
+array array_fill(int $start_index, int $num, mixed $value);
+array array_filter(array $array[, callback $callback[, int $flag = 0]]);
+array array_flip(array $array);
+array array_intersect_assoc(array $array1, array $array2[, array $...]);
+array array_intersect_key(array $array1, array $array2[, array $...]);
+array array_intersect_uassoc(array $array1, array $array2[, array $...], $key_compare_func);
+array array_intersect_ukey(array $array1, array $array2[, array $...], $key_compare_func);
+array array_intersect(array $array1, array $array2[, array $...]);
+bool array_key_exists(mixed $key, array $array);
+// isset() 对于数组中为 NULL 的值不会返回 TRUE，而 array_key_exists() 会
+array array_keys(array $array[, mixed $search_value=null[, bool $strict=false]]);
+array array_map(callable $callable, array $array1[, array $...]);
+array array_merge_recursive(array $array1[, array $...]);
+array array_merge(array $array1[, array $...]);
+bool array_multisort(array &amp;$array1[, mixed $array1_sort_order=SORT_ASC[, mixed $array1_sort_flag=SORT_REGULAR[, mixed $...]]]);
+array array_pad(array $array, int $size, mixed $value);
+mixed array_pop)array &amp;$array);
+number array_product(array $array);
+int array_push(array &amp;$array, mixed $value1[, mixed $...]);
+mixed array_rand(array $array[, int $num=1]);
+mixed array_reduce(array $array, callable $callback[, mixed $initial=NULL]);
+array array_replace_recursive(array $array1, array $array2[, array $...]);
+array array_replace(array $array1, array2[, array $..]);
+array array_reverse(array $array[, bool $preserve_key=false]);
+mixed array_search(mixed $needle, array $haystack[, bool $strict = false]);
+mixed array_shift(array &amp;$array);
+array array_slice(array $array, int $offset[, int $length=NULL[, bool $preserve_keys=false]]);
+array array_splice(array &amp;$input, int $offset[, int $length=count($input)[, mixed $replacement=array()]]);
+number array_sum(array $array);
+array array_udiff_assoc(array $array1, array $array2[, array $...], callable $value_compare_func);
+array array_udiff_uassoc(array $array1, array $array2[. array $...], callable $value_compare_func, callable $key_compare_func);
+array array_udiff(array $array1, array $array2[, array $...], callable $value_compare_func);
+array array_uintersect_assoc(array $array1, array $array2[, array $...], callable $value_compare_func);
+array array_uintersect_uassoc(array $array1, array $array2[, array $...], callable $value_compare_func, callable $key_compare_func);
+array array_uintersect(array $array1, array $array2[, array $...], callable $value_compare_func);
+array array_unique(array $array[, int $sort_flag=SORT_STRING]);
+int array_unshift(array &amp;$array, mixed $value1[, mixed $...]);
+array array_values(array $array);
+bool array_walk_recusive(array &amp;$array, callable $callback[, mixed $userdata=NULL]);
+bool array_walk(array &amp;$array, callable $callback[, mixed $userdata=NULL])
+array array([mixed $...]);
+bool arsort(array &amp;$array[, int $sort_flags=SORT_REGULAR]);
+bool asort(array &amp;$array[, int $sort_flags=SORT_REGULAR]);
+array compact(mixed $varname1[, mixed $...]);
+int count(mixed $array_or_countable[, int $mode=COUNT_NORMAL]);
+mixed current(array &amp;$array);
+array each(array &amp;$array);
+mixed end(array &amp;$array);
+int extract(array &amp;$array[, int $flags=EXTR_OVERWRITE[, string $prefix=NULL]]);
+bool in_array(mixed $needle, array $haystack[, bool $strict=FALSE]);
+mixed key(array $array);
+bool krsort(array &amp;$array[, int $sort_flags=SORT_REGULAR]);
+bool ksort(array &amp;$array[, int $sort_flags=SORT_REGULAR]);
+array list(mixed $var1[, mixed $...]);
+bool natcasesort(array &amp;$array);
+bool natsort(array &amp;$array);
+mixed next(array &amp;$array);
+mixed prev(array &amp;$array);
+array range(mixed $start, mixed $end[, number $step=1]);
+mixed reset(array &amp;$array);
+bool rsort(array &amp;$array[, int $sort_flags=SORT_REGULAR]);
+bool shuffle(array &amp;$array);
+bool sort(array &amp;$array[, int $sort_flags=SORT_REGULAR]);
+bool uasort(array &amp;$array, callable $value_compare_func);
+bool uksort(array &amp;$array, callable $key_compare_func);
+bool usort(array &amp;$array, callable $value_compare_func);
+</code></pre>
+<h4>类/对象的信息</h4>
+<pre><code class="language-php">void __autoload(string $class);
+mixed call_user_method_array(string $method_name, object &amp;$obj, array $params);
+mixed call_user_method(string $method_name, object &amp;obj[, mixed $parameter[, mixed $...]]);
+bool class_alias(string $original, string $alias[, bool $autoload=TRUE]);
+bool class_exists(string $class_name[, bool $autoload=true]);
+string get_called_class(void);
+array get_class_methods(mixed $class_name);
+array get_class_vars(string $class_name);
+string get_class([object $object=NULL]);
+array get_declared_classes(void);
+array get_declared_interface(void);
+array get_declared_traits(void);
+array get_object_vars(object $obj);
+</code></pre>
+<h6>2018.01.30</h6></div>
+    <script src="../../dep/jquery.js?v1518060187"></script>
+    <script src="../../js/comm/keyevent.js?v1518060187"></script>
+    <script src="../../js/catalog/Catalog.js?v1518060187"></script>
+    <script src="../../js/drawboard/DrawBoard.js?v1518060187"></script>
+    <script src="../../js/cmdbar/CmdBar.js?v1518060187"></script>
+    <script src="../../js/drag/Drag.js?v1518060187"></script>
+    <script src="../../js/catalog/Catalog.js?v1518060187"></script>
+    <script src="../../js/note/Note.js?v1518060187"></script>
+    <script src="../../js/html.js?v1518060187"></script>
+    <script src="../../dep/highlight/highlight.min.js?v1518060187"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="js/catalog/catalog.css">
+</head>
+<body>
+<script src="dep/jquery.js"></script>
+<script src="js/comm/keyevent.js"></script>
+<script src="js/catalog/Catalog.js?v8"></script>
+<script>
+    Catalog.init();
+    Catalog.hide();
+    KeyBoard.bind('Ctrl-b', function () {
+        if(Catalog.isShow()) {
+            Catalog.hide();
+        } else {
+            Catalog.show();
+        }
+    });
+    KeyBoard.listen();
+</script>
+</body>
+</html>
