@@ -403,6 +403,12 @@ class Parsedown
 
     protected function blockFencedCode($Line)
     {
+        $attr = explode('#', $Line['text']);
+        $comment = '';
+        if(count($attr) > 1) {
+            $comment = $attr[1];
+            $Line['text'] = $attr[0];
+        }
         if (preg_match('/^['.$Line['text'][0].']{3,}[ ]*([\w-]+)?[ ]*$/', $Line['text'], $matches))
         {
             $Element = array(
@@ -416,6 +422,7 @@ class Parsedown
 
                 $Element['attributes'] = array(
                     'class' => $class,
+                    'data-comment' => $comment,
                 );
             }
 

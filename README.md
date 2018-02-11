@@ -35,6 +35,7 @@
 | |____config.ini          构建配置文件
 | |____build_index.php     主页构建脚本
 | |____md2html.php         markdown转html脚本
+|____app                 App模块
 |____Todo.md             项目待完成清单
 |____README.md           项目简介
 |____index.html          主页

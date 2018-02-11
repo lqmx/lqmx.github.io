@@ -2,18 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-    <meta name="update_time" content="1518323891">
+    <meta name="update_time" content="1518329776">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>虚拟DOM</title>
-    <link rel="stylesheet" href="../../css/reset.css?v1518323891">
-    <link rel="stylesheet" href="../../css/md.css?v1518323891">
-    <link rel="stylesheet" href="../../js/drawboard/draw_board.css?v1518323891">
-    <link rel="stylesheet" href="../../js/catalog/catalog.css?v1518323891">
-    <link rel="stylesheet" href="../../js/cmdbar/cmd_bar.css?v1518323891">
-    <link rel="stylesheet" href="../../js/catalog/catalog.css?v1518323891">
-    <link rel="stylesheet" href="../../js/note/note.css?v1518323891">
-    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1518323891">
+    <link rel="stylesheet" href="../../css/reset.css?v1518329776">
+    <link rel="stylesheet" href="../../css/md.css?v1518329776">
+    <link rel="stylesheet" href="../../js/drawboard/draw_board.css?v1518329776">
+    <link rel="stylesheet" href="../../js/catalog/catalog.css?v1518329776">
+    <link rel="stylesheet" href="../../js/cmdbar/cmd_bar.css?v1518329776">
+    <link rel="stylesheet" href="../../js/catalog/catalog.css?v1518329776">
+    <link rel="stylesheet" href="../../js/note/note.css?v1518329776">
+    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1518329776">
 </head>
 <body>
     <div class="md"><h1>虚拟DOM</h1>
@@ -24,7 +24,7 @@
 <p>(2) 保证最小化的DOM操作，使得执行效率得到保证</p>
 <p>Virtual DOM 本质上就是在JS和DOM之间做了一个缓存</p>
 <h3>用JS表示DOM结构</h3>
-<pre><code class="language-js">// 1. 构建虚拟DOM
+<pre><code class="language-js" data-comment="">// 1. 构建虚拟DOM
 var tree = el('div', {'id': 'container'}, [
     el('h1', {style: 'color: blue'}, ['simple virtal dom']),
     el('p', ['Hello, virtual-dom']),
@@ -51,10 +51,10 @@ var newTree = el('div', {'id': 'container'}, [
 <li>替换原有节点, 用REPLACE表示</li>
 <li>调整子节点，包括移动、删除等，用REORDER表示</li>
 </ul>
-<pre><code class="language-js">// 4. 比较两棵虚拟DOM树的不同
+<pre><code class="language-js" data-comment="">// 4. 比较两棵虚拟DOM树的不同
 var patches = diff(tree, newTree)</code></pre>
 <h4>对真实DOM进行最小化修改</h4>
-<pre><code class="language-js">// 5. 在真正的DOM元素上应用变更
+<pre><code class="language-js" data-comment="">// 5. 在真正的DOM元素上应用变更
 patch(root, patches)</code></pre>
 <h2>虚拟DOM VS 直接操作原生DOM</h2>
 <p>innerHTML: render html string + 重新创建所有 DOM 元素</p>
@@ -71,16 +71,16 @@ patch(root, patches)</code></pre>
 <p><a href="https://www.zhihu.com/question/29504639">如何理解虚拟DOM?</a></p>
 <p><a href="http://www.alloyteam.com/2015/10/react-virtual-analysis-of-the-dom/">React虚拟DOM浅析</a></p>
 <h6>2018.01.24</h6></div>
-    <script src="../../dep/jquery.js?v1518323891"></script>
-    <script src="../../js/comm/keyevent.js?v1518323891"></script>
-    <script src="../../js/catalog/Catalog.js?v1518323891"></script>
-    <script src="../../js/drawboard/DrawBoard.js?v1518323891"></script>
-    <script src="../../js/cmdbar/CmdBar.js?v1518323891"></script>
-    <script src="../../js/drag/Drag.js?v1518323891"></script>
-    <script src="../../js/catalog/Catalog.js?v1518323891"></script>
-    <script src="../../js/note/Note.js?v1518323891"></script>
-    <script src="../../js/html.js?v1518323891"></script>
-    <script src="../../dep/highlight/highlight.min.js?v1518323891"></script>
+    <script src="../../dep/jquery.js?v1518329776"></script>
+    <script src="../../js/comm/keyevent.js?v1518329776"></script>
+    <script src="../../js/catalog/Catalog.js?v1518329776"></script>
+    <script src="../../js/drawboard/DrawBoard.js?v1518329776"></script>
+    <script src="../../js/cmdbar/CmdBar.js?v1518329776"></script>
+    <script src="../../js/drag/Drag.js?v1518329776"></script>
+    <script src="../../js/catalog/Catalog.js?v1518329776"></script>
+    <script src="../../js/note/Note.js?v1518329776"></script>
+    <script src="../../js/html.js?v1518329776"></script>
+    <script src="../../dep/highlight/highlight.min.js?v1518329776"></script>
     <script>hljs.initHighlightingOnLoad();</script>
 </body>
 </html>
