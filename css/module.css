@@ -1,0 +1,143 @@
+/* catalog */
+.catalog {
+    width: 200px;
+    height:auto;
+    background: #292b36;
+    color: #ffffff;
+    position: fixed;
+    top: 100px;
+    right: 50px;
+    font-size: 14px;
+    line-height: 18px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    box-shadow: 2px 2px 4px #e3ddfa;
+}
+
+.catalog dl {
+    margin: 10px 0;
+}
+
+.catalog dt {
+    padding-left: 15px;
+}
+
+.catalog dt.active {
+    border-left: 6px solid #ae81ff;
+    color: #555;
+    background: #d3c6ff;
+}
+
+.catalog dt:hover {
+    border-left: 6px solid #ae81ff;
+    color: #555;
+    background: #d3c6ff;
+}
+
+.catalog dd {
+    padding-left: 30px;
+}
+
+.catalog dd.active {
+    border-left: 6px solid #ae81ff;
+    color: #555;
+    background: #d3c6ff;
+}
+
+.catalog dd:hover {
+    border-left: 6px solid #ae81ff;
+    color: #555;
+    background: #d3c6ff;
+}
+/* cmd_bar */
+.cmd-bar {
+    display: none;
+    background: rgba(0, 0, 0, .85);
+    color: #ffffff;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 6666;
+}
+.cmd-bar input {
+    border: 0;
+    outline: none;
+    width: 100%;
+    color: #ffffff;
+    background-color: transparent;
+}
+.cmd-bar ul {
+    margin: 0 0 0 4px;
+    padding:0;
+}
+.cmd-bar li {
+    list-style: none;
+    margin: 1px 0;
+}
+.cmd-bar li.tip {
+    display: none;
+}
+.cmd-bar li > span {
+    display: block;
+    min-width: 100px;
+    float: left;
+}
+.cmd-bar .des {
+    font-size: 10px;
+    font-style: italic;
+}
+.clear {
+    clear: both;
+}
+/* draw_board */
+.draw-board{
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.cursor-pen {
+    cursor: url(pen.cur),default;
+}
+/* note */
+.note {
+    position: fixed;
+    right: 20px;
+    top: 50px;
+    width: 300px;
+    height: 360px;
+    background: #4d4d4d;
+    color: #FFFFFF;
+    border-radius: 6px;
+    z-index:  9999;
+}
+.note .head {
+    font-size: 20px;
+    line-height:40px;
+    padding: 10px;
+    text-align: center;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.note textarea {
+    font-size: 16px;
+    color: #eeeeee;
+    border: none;
+    margin: 0;
+    padding: 10px;
+    background: inherit;
+    width: 280px;
+    resize: none;
+    outline: none;
+    height:230px;
+    line-height:22px;
+    letter-spacing: 2px;
+}
