@@ -4,6 +4,8 @@
 
 用于个人记录一些阅读笔记，心得，备忘。。。
 
+note is lazying lazying...
+
 ## 项目结构
 
 ```txt

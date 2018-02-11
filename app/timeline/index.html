@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TimeLine</title>
+    <link rel="stylesheet" href="../../css/reset.css">
+    <style>
+        body {
+            background: #333644;
+        }
+        .line {
+            margin: 30px auto;
+            width: 98%;
+            height: 20px;
+        }
+        .day {
+            background: #FAFFB8;
+        }
+
+        .week {
+            background: #C5F0A4;
+        }
+        .month {
+            background: #35B0AB;
+        }
+        .year {
+            background: #226B80;
+        }
+        .process {
+            height: 100%;
+            opacity: .6;
+            background-color: #000000;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+<div class="timeline">
+    <div class="line day"><div class="process"></div></div>
+    <div class="line week"><div class="process"></div></div>
+    <div class="line month"><div class="process"></div></div>
+    <div class="line year"><div class="process"></div></div>
+</div>
+<script>
+    var day = document.querySelector('.day>.process');
+    var week = document.querySelector('.week>.process');
+    var month = document.querySelector('.month>.process');
+    var year = document.querySelector('.year>.process');
+    var date = new Date();
+    var dSec = date.getHours() * 3600 + date.getMinutes() * 60 + date.getSeconds();
+    var dWeek = date.getDay() + 1;
+    var nMonth = date.getDate();
+    var dMonth = new Date(date.getYear(),date.getMonth()+1,0).getDate();
+    var nYear = Math.ceil((new Date() -new Date(new Date().getFullYear().toString()))/(24*60*60*1000));
+    var dYear = ((0===date.getFullYear()%4) && (0===date.getFullYear()%100) || (0===date.getFullYear()%400)) ? 366 : 365;
+
+    day.style.width = (dSec/86400).toFixed(4)*100 + "%";
+    week.style.width = (dWeek/7).toFixed(4)*100 + "%";
+    month.style.width = (nMonth/dMonth).toFixed(4)*100 + "%";
+    year.style.width = (nYear/dYear).toFixed(4)*100 + "%";
+</script>
+</body>
+</html>
