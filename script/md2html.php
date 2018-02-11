@@ -7,6 +7,7 @@ $config = parse_ini_file("./config.ini");
 $parsedown = new Parsedown();
 $v = time();
 $base = file_get_contents("./tpl/note.html");
+$base = str_replace('$v', $v, $base);
 
 echo "BEGIN...", PHP_EOL;
 if($argc >=2 ) {

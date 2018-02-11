@@ -4,8 +4,10 @@ $config = parse_ini_file("./config.ini");
 
 $v = time();
 $base = file_get_contents("tpl/index.html");
+$base = str_replace('$v', $v, $base);
 
 $paperDiv = file_get_contents("tpl/paper.html");
+
 
 $files = glob($config['md_dir']."*.md");
 $papers = "";

@@ -5,3 +5,4 @@ requirejs.config({
     }
 });
 
+console.log('lqmx');

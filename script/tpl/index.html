@@ -8,13 +8,16 @@
     <title>lazy note</title>
     <link rel="stylesheet" href="css/reset.css?v$v">
     <link rel="stylesheet" href="css/style.css?v$v">
+    <script src="dep/require.js?$v"></script>
 </head>
 <body>
 <div class="table">
     %s
 </div>
-<script src="dep/jquery.js?v$v"></script>
-<script src="js/drag/Drag.js?v$v"></script>
-<script src="js/index.js?v$v"></script>
+<script >
+    requirejs(['js/conf/r'], function(rc) {
+        requirejs(['../js/index']);
+    });
+</script>
 </body>
 </html>
