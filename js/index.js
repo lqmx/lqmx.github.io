@@ -31,6 +31,9 @@ define(function (require) {
                     window.location.href = window.location.origin + htmlDir + $(v).attr('data-url');
                 }
             });
+            $(v).find('.goto').click(function () {
+                window.location.href = window.location.origin + htmlDir + $(v).attr('data-url');
+            });
             Drag.bind($(v));
             $(v).css({
                 left: (Math.random() * (winWidth-160) * 0.8).toFixed(2) + 'px',
