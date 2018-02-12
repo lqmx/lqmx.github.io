@@ -42,6 +42,25 @@ body {
     font-size: 13px;
     font-style: italic;
 }
+.paper .goto {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    position: absolute;
+    top: 8px;
+    right: 6px;
+    opacity: .4;
+}
+.paper .goto:after {
+    content: '>';
+    margin-left: 5px;
+    font-weight: bold;
+    color: #6c6c6c;
+}
+.paper .goto:hover {
+    opacity: .6;
+}
 .clear {
     clear: both;
 }
