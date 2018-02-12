@@ -1,5 +1,5 @@
 body {
-    background: #ededed;
+    background: #5d4037;
 }
 .table {
     width: 90%;
@@ -12,30 +12,69 @@ body {
     width: 160px;
     height: 200px;
     background: #FFF;
-    box-shadow:2px 2px 3px #aaaaaa;
-    border:1px solid #e6e6e6;
+    box-shadow:0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 4px;
     position: absolute;
-    padding: 10px 20px;
     cursor: pointer;
-    display: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
 }
 .paper:hover{
     z-index: 2;
-    box-shadow:2px 2px 4px #aaaaaa;
+    box-shadow: 0 8px 12px 0 rgba(0, 0, 0, 0.2), 0 10px 26px 0 rgba(0, 0, 0, 0.19);
     transition: 0.5s;
 }
-
+.paper .image {
+    border-radius: 4px 4px 0 0;
+    height: 110px;
+}
 .paper .title {
-    margin-top: 20px;
-    font-size: 20px;
-    text-align: center;
+    padding: 10px;
+    font-size: 14px;
+    text-align: left;
 }
 .paper .date {
-    float: right;
-    margin-top: 120px;
+    position: inherit;
+    right: 10px;
+    bottom: 5px;
+    font-size: 13px;
     font-style: italic;
 }
 .clear {
     clear: both;
 }
+
+.bg0 {
+    background-color: #FFED78;
+}
+
+.bg1 {
+    background-color: #BAB5F6;
+}
+
+.bg2 {
+    background-color: #6A65D8;
+}
+
+.bg3 {
+    background-color: #00B7C2;
+}
+
+.bg4 {
+    background-color: #FF894C;
+}
+
+.bg5 {
+    background-color: #C5F0A4;
+}
+
+.bg6 {
+    background-color: #364857;
+}
+
+.bg7 {
+    background-color: #FB5660;
+}
+

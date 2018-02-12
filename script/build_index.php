@@ -2,6 +2,16 @@
 
 $config = parse_ini_file("./config.ini");
 
+$types = array(
+    'web' => 1,
+    'it' => 2,
+    'memo' => 3,
+    'algorithm' => 4,
+    'php' => 5,
+    'js' => 6,
+    'literature' => 7,
+);
+
 $v = time();
 $base = file_get_contents("tpl/index.html");
 $base = str_replace('$v', $v, $base);
@@ -20,13 +30,15 @@ foreach ($files as $file) {
         $date = date("Ymd", time());
         $title = $readme;
         $url = $readme;
+        $type = 'intro';
     }
     else {
         list($date, $type, $url, $title) = explode ('.', $filename);
         if($type == 'ing')
             continue;
     }
-    $papers .= sprintf($paperDiv, $url, $title, $date);
+    $bg = isset($types[$type])?$types[$type]:0;
+    $papers .= sprintf($paperDiv, $url, 'bg'.$bg, $title, date("d M Y", strtotime($date)));
 }
 
 $html = sprintf($base, $papers);

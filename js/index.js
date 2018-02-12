@@ -3,7 +3,8 @@ define(function (require) {
         Drag = require('../../module/drag/Drag');
     $(function () {
         var htmlDir = "/data/html/";
-        var winHeight = $(document).height(), winWidth = $(document).width();
+        var winHeight = $(document).height(),
+            winWidth = $(document).width();
         var timer = null, second = 0;
         var paperState = Drag.PAPER_STATE_DRAG;
 
@@ -32,7 +33,7 @@ define(function (require) {
             });
             Drag.bind($(v));
             $(v).css({
-                left: (Math.random() * winWidth * 0.8).toFixed(2) + 'px',
+                left: (Math.random() * (winWidth-160) * 0.8).toFixed(2) + 'px',
                 top: (Math.random() * winHeight * 0.8).toFixed(2) + 'px',
                 transform: transformStyle
             }).show();

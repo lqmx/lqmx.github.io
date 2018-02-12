@@ -3,23 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="module/catalog/catalog.css">
+    <link rel="stylesheet" href="css/reset.css?v1518362830">
+    <style>
+        body {
+            background: #ededed;
+        }
+        .table {
+            width: 90%;
+            height: 94%;
+            margin: 10px auto;
+            position: relative;
+        }
+        .paper {
+            z-index: 1;
+            width: 160px;
+            height: 200px;
+            background: #FFF;
+            box-shadow:0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            position: absolute;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        .paper:hover{
+            z-index: 2;
+            box-shadow: 0 8px 12px 0 rgba(0, 0, 0, 0.2), 0 10px 26px 0 rgba(0, 0, 0, 0.19);
+            transition: 0.5s;
+        }
+        .paper .image {
+            background: #4CAF50;
+            height: 110px;
+        }
+        .paper .title {
+            padding: 10px;
+            font-size: 14px;
+            text-align: left;
+        }
+        .paper .date {
+            position: inherit;
+            right: 10px;
+            bottom: 5px;
+            font-size: 13px;
+            font-style: italic;
+        }
+        .clear {
+            clear: both;
+        }
+    </style>
 </head>
 <body>
+
+<div class="table">
+<div class="paper" data-url="php_core_technology_and_best_practice_2">
+    <div class="image"></div>
+    <div class="title">PHP核心技术与最佳实践-第二章-面向对象的设计原则</div>
+    <div class="date">20180210</div>
+</div>
+    </div>
 <script src="dep/jquery.js"></script>
-<script src="js/comm/keyevent.js"></script>
-<script src="module/catalog/Catalog.js?v8"></script>
 <script>
-    Catalog.init();
-    Catalog.hide();
-    KeyBoard.bind('Ctrl-b', function () {
-        if(Catalog.isShow()) {
-            Catalog.hide();
-        } else {
-            Catalog.show();
-        }
+    $(function () {
+        $('.paper').show();
     });
-    KeyBoard.listen();
 </script>
 </body>
 </html>
