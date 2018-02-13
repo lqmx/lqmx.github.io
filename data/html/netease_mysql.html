@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="update_time" content="1518501343">
+    <meta name="update_time" content="1518514022">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>网易技术部的MySQL中文资料</title>
-    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1518501343">
-    <link rel="stylesheet" href="../../css/reset.css?v1518501343">
-    <link rel="stylesheet" href="../../css/md.css?v1518501343">
-    <link rel="stylesheet" href="../../css/module.css?v1518501343">
-    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1518501343">
-    <script src="../../dep/require.js?1518501343"></script>
+    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1518514022">
+    <link rel="stylesheet" href="../../css/reset.css?v1518514022">
+    <link rel="stylesheet" href="../../css/md.css?v1518514022">
+    <link rel="stylesheet" href="../../css/module.css?v1518514022">
+    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1518514022">
+    <script src="../../dep/require.js?1518514022"></script>
 </head>
 <body>
 <div class="md"><h1>网易技术部的MySql中文资料</h1>
@@ -284,6 +284,114 @@ mysql&gt; select * from test;
 <li>要注意浮点数中一些特殊值的处理</li>
 </ol>
 <h3>第四章 字符集</h3>
+<h4>4.1 字符集概述</h4>
+<p>字符集是一套符号和编码的规则</p>
+<h4>4.2 MySql支持字符集简介</h4>
+<pre><code class="language-txt" data-comment="">mysql&gt; show character set;</code></pre>
+<p>mysql的字符集包括:</p>
+<p><code class="inline-code">字符集</code>(character): 定义mysql存储字符串的方式</p>
+<p><code class="inline-code">校对规则</code>(collation): 定义了比较字符串的方式</p>
+<p>字符集和校对规则是一对多的关系,MySql支持30多种字符集和70多种校对规则</p>
+<p>每种字符集至少对应一个校对规则</p>
+<pre><code class="language-txt" data-comment="">mysql&gt; show collation like 'utf8%';
+</code></pre>
+<h4>4.3 Unicode简述</h4>
+<p>Unicode是一种编码规范,也是一种字符编码方法,可以容纳全世界所有语言文字的编码方案。</p>
+<h4>4.4 怎样选择合适的字符集</h4>
+<p>能够完全满足应用的前提下,尽量使用小的字符集。</p>
+<h4>4.5 MySql字符集的设置</h4>
+<p>mysql的字符集和校对规则有四个级别的默认设置: <code class="inline-code">服务器级</code>、<code class="inline-code">数据库级</code>、<code class="inline-code">表级</code>和<code class="inline-code">字段级</code></p>
+<pre><code class="language-txt" data-comment="">vim my.cnf
+[mysqld]
+default-character-set=utf8
+or
+mysqld --default-character-set=utf8
+or
+./configure --with-charset=utf8</code></pre>
+<p>查询当前服务器的字符集和校对规则</p>
+<pre><code>mysql&gt; show variables like 'character_set_server';</code></pre>
+<h3>第五章 索引的设计和使用</h3>
+<h4>5.1 MySql索引概述</h4>
+<p>所有MySql列类型可以被索引。</p>
+<p>索引总是对整个列进行,不支持局部(前缀)索引。</p>
+<h4>5.2 设计索引的原则</h4>
+<ul>
+<li>搜索的索引列,不一定是所要选择的列</li>
+<li>
+<p>使用唯一索引</p>
+<p>对于唯一值的列,索引的效果最好,而具有多个重复值的列,其索引效果最差</p>
+</li>
+<li>使用短索引</li>
+<li>利用最左前缀</li>
+<li>不要过度索引</li>
+<li>考虑在列上进行的比较类型</li>
+</ul>
+<h4>5.3 btree索引与hash索引</h4>
+<p>下列范围查询只用月btree索引和hash索引</p>
+<pre><code class="language-sql" data-comment="">select * from t1 where key_col = 1 or key_col in (1, 2, 3);</code></pre>
+<p>下列范围查询适用于btree索引</p>
+<pre><code class="language-sql" data-comment="">select * from t1 where key_col &gt; 1 and key_col &lt; 10;
+select * from t1 where key_col like 'ab%' or key_col between 'bar' and 'foo';</code></pre>
+<h4>5.4 MySql如何使用索引</h4>
+<p>大多数mysql索引(primary key、unique、index和fulltext)在b树中存储,只是空间列类型的
+索引引用r-树,并且memory表还支持hash索引</p>
+<h3>第六章 锁机制和事务控制</h3>
+<h4>6.1 如何加锁</h4>
+<pre><code class="language-txt" data-comment="">加锁
+lock tables 
+    tbl_name [as alias] { read [local] | [low_priority] where}
+    [, tbl_name [as alias] { read [local] | [low_priority] where} ] ...
+
+解锁
+unlock tables</code></pre>
+<p>InnoDB的存储引擎提供行级锁,支持共享锁和排他锁,以及四种不同的隔离级别</p>
+<h4>6.2 死锁</h4>
+<p>InnoDB自动检测事务的死锁,并回滚一个或几个事务来防止死锁。</p>
+<p>不推荐在一个事务中混合更新不同存储类型的表,也不推荐相同类型的表采用不同的锁定方式加锁</p>
+<h4>6.3 事务控制</h4>
+<pre><code class="language-txt" data-comment="">start transaction | begin [work]
+commit [work] [and [no] chain] [[no] release]
+rollback [work] [and [no] chain] [[no] release]
+set autocommit = {0|1}</code></pre>
+<p>所有的ddl语句是不能回滚的,并且部分的ddl语句会造成隐式的提交。</p>
+<p>在事务中可以通过定义savepoint,指定回滚事务的一个部分,但是不能指定提交事务的一个部分</p>
+<h3>第七章 SQL的安全问题</h3>
+<h4>7.1 SQL注入简述</h4>
+<p>SQL Injection原理: 利用某些数据库的外部接口把用户数据插入到实际的数据库操作语言中,
+从而达到入侵数据库乃至操作系统的目的</p>
+<h4>7.3 开发中可以采取的措施</h4>
+<ul>
+<li>prepareStatement + bind-variable</li>
+<li>使用应用程序提供的转换函数</li>
+<li>自己定义函数进行校验
+<ul>
+<li>整理数据使之变得有效</li>
+<li>拒绝已知的非法输入</li>
+<li>只接受已知的合法输入</li>
+</ul></li>
+</ul>
+<h3>第八章 SQL Mode及相关问题</h3>
+<h4>8.1 MySql SQL Mode 简介</h4>
+<p>定义了mysql应支持的SQL语法,以及应该在数据上执行何种确认检查</p>
+<pre><code class="language-txt" data-comment="">set [session|global] sql_mode='modes'</code></pre>
+<p>常用的sql_mode</p>
+<ol>
+<li>ANSI: 更改语法和行为,使其更符合标准SQL</li>
+<li>STRICT_TRANS_TABLES: 如果不能将给定的值插入到事务中,则放弃该语句</li>
+<li>TRADITIONAL: make mysql的行为向&quot;传统&quot;SQL数据库系统。该模式的简单描述是当在列中插入不正确
+的值时&quot;给出错误而不是警告&quot;。</li>
+</ol>
+<h4>8.2 SQL Mode与可移植性</h4>
+<h4>8.3 SQL Mode与数据校验</h4>
+<p>SQL Mode可以实现对数据校验和转移等功能</p>
+<ul>
+<li>校验日期数据的合法性</li>
+<li>在insert或update过程中,如果被0除,则产生错误</li>
+<li>将'&quot;'视为识别符('`'引号字符)</li>
+<li>禁用反斜杠作为字符串的退出字符,启用NO_BACKSLASH_ESCAPES模式,反斜杠则为普通字符</li>
+<li>将||视为字符串连接操作符(+),而不视为or</li>
+</ul>
+<h3>第九章 常用SQL技巧</h3>
 <h6>2018.02.13</h6></div>
 <script >
     requirejs(['../../js/conf/r'], function(rc) {

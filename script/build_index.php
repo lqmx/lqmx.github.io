@@ -11,6 +11,7 @@ $types = array(
     'js' => 6,
     'literature' => 7,
     'mysql' => 'mysql',
+    'snippet' => 'snippet',
 );
 
 $v = time();
