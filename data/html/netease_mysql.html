@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="update_time" content="1518501254">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>网易技术部的MySQL中文资料</title>
+    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1518501254">
+    <link rel="stylesheet" href="../../css/reset.css?v1518501254">
+    <link rel="stylesheet" href="../../css/md.css?v1518501254">
+    <link rel="stylesheet" href="../../css/module.css?v1518501254">
+    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1518501254">
+    <script src="../../dep/require.js?1518501254"></script>
+</head>
+<body>
+<div class="md"><h1>网易技术部的MySql中文资料</h1>
+<h6>2018.02.13</h6>
+<h2>第一篇 开发篇</h2>
+<h3>第一章 帮助的使用</h3>
+<h4>1.1 按照层次看帮助</h4>
+<pre><code class="language-txt" data-comment=""># 不知道帮助能够提供什么
+mysql&gt; ? contents
+# 看自己感兴趣的部分
+mysql&gt; ? data types
+# 对于列出的具体数据类型,可以进一步看详细情况
+mysql&gt; ? int</code></pre>
+<h4>1.2 快速查阅帮助</h4>
+<pre><code class="language-txt" data-comment=""># 快速查阅某项语法时,可以使用关键字进行快速查询
+mysql&gt; ? show
+# 想知道create table的语法
+mysql&gt; ? create table
+</code></pre>
+<h3>第二章 表类型(存储引擎)的选择</h3>
+<h4>2.1 MySql存储引擎概述</h4>
+<p>mysql的存储引擎包括:MyISAM、InnoDB、BDB、MEMORY、MERGE、EXAMPLE、NDB Cluster、
+ARCHIVE、CSV、BLACKHOLE、FEDERATED等,其中InnoDB和BDB提供事务安全表,其他存储引擎
+都是非事务安全表。</p>
+<h4>2.2 各种存储引擎的特性</h4>
+<table>
+<thead>
+<tr>
+<th>特点</th>
+<th>MyISAM</th>
+<th>DBD</th>
+<th>Memory</th>
+<th>InnoDB</th>
+<th>Archive</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>存储限制</td>
+<td>没有</td>
+<td>没有</td>
+<td>有</td>
+<td>64TB</td>
+<td>没有</td>
+</tr>
+<tr>
+<td>事务安全</td>
+<td></td>
+<td>支持</td>
+<td></td>
+<td>支持</td>
+<td></td>
+</tr>
+<tr>
+<td>锁机制</td>
+<td>表锁</td>
+<td>页锁</td>
+<td>表锁</td>
+<td>行锁</td>
+<td>行锁</td>
+</tr>
+<tr>
+<td>B树索引</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+<td></td>
+</tr>
+<tr>
+<td>哈希索引</td>
+<td></td>
+<td></td>
+<td>支持</td>
+<td>支持</td>
+<td></td>
+</tr>
+<tr>
+<td>全文索引</td>
+<td>支持</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>集群索引</td>
+<td></td>
+<td></td>
+<td></td>
+<td>支持</td>
+<td></td>
+</tr>
+<tr>
+<td>数据缓存</td>
+<td></td>
+<td></td>
+<td>支持</td>
+<td>支持</td>
+<td></td>
+</tr>
+<tr>
+<td>索引缓存</td>
+<td>支持</td>
+<td></td>
+<td>支持</td>
+<td>支持</td>
+<td></td>
+</tr>
+<tr>
+<td>数据可压缩</td>
+<td>支持</td>
+<td></td>
+<td></td>
+<td></td>
+<td>支持</td>
+</tr>
+<tr>
+<td>空间使用</td>
+<td>低</td>
+<td>低</td>
+<td>N/A</td>
+<td>高</td>
+<td>非常低</td>
+</tr>
+<tr>
+<td>内存使用</td>
+<td>低</td>
+<td>低</td>
+<td>中等</td>
+<td>高</td>
+<td>低</td>
+</tr>
+<tr>
+<td>批量插入速度</td>
+<td>高</td>
+<td>高</td>
+<td>高</td>
+<td>低</td>
+<td>非常高</td>
+</tr>
+<tr>
+<td>支持外键</td>
+<td></td>
+<td></td>
+<td></td>
+<td>支持</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>最常用的两种存储引擎:</p>
+<ol>
+<li>
+<p>每个MyISAM在磁盘上存储成三个文件。文件名和表名相同,扩展名为.frm(存储表定义)、
+.MYD(MYData,存储数据)、.MYI(MYIndex,存储索引)。数据文件和索引文件可以放置在不同
+的目录,平均分布io,获得更快的速度。</p>
+</li>
+<li>InnoDB提供了具有提交、回滚和崩溃修复能力的事务安全。</li>
+</ol>
+<h4>2.3 如何选择合适的存储引擎</h4>
+<ol>
+<li>MyISAM: 它是Web、数据仓储和其他应用环境下最常用的存储引擎之一</li>
+<li>InnoDB: 用于事务处理应用程序</li>
+<li>Memory: 将所有数据存储在RAM中,在需要快速查找引用和其他类似数据的环境下,可提供鸡块的访问</li>
+<li>Merge: 允许MySQL DBA或开发人员将一系列等同的MyISAM表以逻辑方式组合在一起,并作为
+一个对象引用它们。对于诸如数据仓储等VLDB环境十分适合。</li>
+</ol>
+<h3>第三章 选择合适的数据类型</h3>
+<h4>3.1 选择数据类型的基本原则</h4>
+<p>使用合适的存储引擎,根据特定的存储引擎,确定如何选择合适的数据类型。</p>
+<ol>
+<li>MyISAM 最好使用固定长度的数据列代替可变长度的数据列</li>
+<li>Memory 目前都使用固定长度的数据行存储,因此无论使用char或varchar列都没有关系</li>
+<li>InnoDB 建议使用varchar</li>
+</ol>
+<h4>3.2 固定长度数据列与可变长度的数据列</h4>
+<p>char与varchar</p>
+<p>类型相同,但是保存和检索方式不同,最大长度和是否尾部空格被保留等方面也不同</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>char(4)</th>
+<th>存储需求</th>
+<th>varchar(4)</th>
+<th>存储需求</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>''</td>
+<td>'    '</td>
+<td>四个字节</td>
+<td>''</td>
+<td>一个字节</td>
+</tr>
+<tr>
+<td>'ab'</td>
+<td>'ab  '</td>
+<td>四个字节</td>
+<td>'ab '</td>
+<td>三个字节</td>
+</tr>
+<tr>
+<td>'abcd'</td>
+<td>'abcd'</td>
+<td>四个字节</td>
+<td>'abcd '</td>
+<td>五个字节</td>
+</tr>
+<tr>
+<td>'abcdefg'</td>
+<td>'abcd'</td>
+<td>四个字节</td>
+<td>'abcd '</td>
+<td>五个字节</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-txt" data-comment="">mysql&gt; create table vc(v varchar(4), c char(4));
+Query OK, 0 rows affected (0.04 sec)
+
+mysql&gt; insert into vc values('ab ', 'ab ');
+Query OK, 1 row affected (0.01 sec)
+
+mysql&gt; select concat(v, '+'), concat(c, '+') from vc;
++----------------+----------------+
+| concat(v, '+') | concat(c, '+') |
++----------------+----------------+
+| ab +           | ab+            |
++----------------+----------------+
+1 row in set (0.01 sec)
+</code></pre>
+<p>text和blob</p>
+<ul>
+<li>blob和text值也会引起自己的一些问题,特别是执行了大量的删除或更新操作</li>
+</ul>
+<p>删除会留下&quot;空洞&quot;,找出空间碎片,建议定期使用<code class="inline-code">optimize table</code>定期整理</p>
+<ul>
+<li>使用合成的(synthetic)索引</li>
+</ul>
+<p>合成的散列索引对于那些blob或text数据列特别有用。用散列标志符值查找的速度比搜索blob列本身
+的速度快得多</p>
+<ul>
+<li>
+<p>在不必要的时候避免检索大型的blob或text值</p>
+</li>
+<li>把blob或text列分离到单独的表中</li>
+</ul>
+<p>减少主表中的碎片</p>
+<h4>3.3 浮点数和定点数</h4>
+<pre><code class="language-txt" data-comment="">mysql&gt; create table test(c1 float(10,2),c2 decimal(10,2));
+Query OK, 0 rows affected (0.01 sec)
+
+mysql&gt; insert into test values(131072.32, 131072.32);
+Query OK, 1 row affected (0.00 sec)
+
+mysql&gt; select * from test;
++-----------+-----------+
+| c1        | c2        |
++-----------+-----------+
+| 131072.31 | 131072.32 |
++-----------+-----------+
+1 row in set (0.00 sec)</code></pre>
+<ol>
+<li>浮点数存在误差问题</li>
+<li>对货币等精度敏感的数据,应该使用定点数表示或存储</li>
+<li>编程中,如果用到浮点数,要特别注意误差问题,并尽量避免做浮点数比较</li>
+<li>要注意浮点数中一些特殊值的处理</li>
+</ol>
+<h3>第四章 字符集</h3>
+<h6>2018.02.13</h6></div>
+<script >
+    requirejs(['../../js/conf/r'], function(rc) {
+        requirejs(['../js/html']);
+    });
+</script>
+</body>
+</html>

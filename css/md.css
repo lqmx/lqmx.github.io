@@ -108,6 +108,40 @@ body {
     color: #43a8f9;
 }
 
+.md table {
+    background: rgba(41, 43, 54, 0.12);
+    width: 100%;
+    color: #353535;
+    text-align: center;
+}
+
+.md thead {
+    background: #292b36;
+    color: #fcfcfc;
+
+}
+
+.md th {
+    height: 40px;
+    line-height: 40px;
+    padding: 0 10px;
+    font-weight: bold;
+}
+
+.md tbody {
+    padding: 10px;
+}
+
+.md tr {
+    height: 35px;
+    line-height: 35px;
+    border-top: 2px solid #ffffff;
+}
+
+.md td {
+    padding: 0 10px;
+}
+
 .md .bq1 {
     border-left: 5px solid #42a5f5;
 }
@@ -129,3 +163,4 @@ body {
 .md .bq7 {
     border-left: 5px solid #292b36;
 }
+

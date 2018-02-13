@@ -10,6 +10,7 @@ $types = array(
     'php' => 5,
     'js' => 6,
     'literature' => 7,
+    'mysql' => 'mysql',
 );
 
 $v = time();
@@ -38,7 +39,7 @@ foreach ($files as $file) {
             continue;
     }
     $bg = isset($types[$type])?$types[$type]:0;
-    $papers .= sprintf($paperDiv, $url, 'bg'.$bg, $title, date("d M Y", strtotime($date)));
+    $papers .= sprintf($paperDiv, $url, 'card-bg-'.$bg, $title, date("d M Y", strtotime($date)));
 }
 
 $html = sprintf($base, $papers);

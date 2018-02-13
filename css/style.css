@@ -65,35 +65,38 @@ body {
     clear: both;
 }
 
-.bg0 {
+.card-bg-0 {
     background-color: #FFED78;
 }
 
-.bg1 {
+.card-bg-1 {
     background-color: #BAB5F6;
 }
 
-.bg2 {
+.card-bg-2 {
     background-color: #6A65D8;
 }
 
-.bg3 {
+.card-bg-3 {
     background-color: #00B7C2;
 }
 
-.bg4 {
+.card-bg-4 {
     background-color: #FF894C;
 }
 
-.bg5 {
+.card-bg-5 {
     background-color: #C5F0A4;
 }
 
-.bg6 {
+.card-bg-6 {
     background-color: #364857;
 }
 
-.bg7 {
+.card-bg-7 {
     background-color: #FB5660;
 }
 
+.card-bg-mysql {
+    background: #4479a1;
+}
