@@ -23,7 +23,7 @@ var Drag = (function () {
             self.dragDiv = $(this);
             self.offsetX = e.clientX - self.dragDiv[0].offsetLeft;
             self.offsetY = e.clientY - self.dragDiv[0].offsetTop;
-            $(this).css({'z-index': 2, 'cursor': 'move'});
+            $(this).css({'z-index': 233, 'cursor': 'move'});
             self.target = $(this);
             $(window).mousemove(divMove);
             $(window).mouseup(divDrop);

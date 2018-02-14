@@ -14,7 +14,6 @@ $types = array(
     'snippet' => 'snippet',
 );
 
-// left: 402.58px; top: 330.74px; transform: rotate(332deg);
 
 $v = time();
 $base = file_get_contents("tpl/index.html");
@@ -42,7 +41,12 @@ foreach ($files as $file) {
             continue;
     }
     $bg = isset($types[$type])?$types[$type]:0;
-    $papers .= sprintf($paperDiv, $url, 'card-bg-'.$bg, $title, date("d M Y", strtotime($date)));
+    $img = glob($config['img_dir']."$url*");
+    $imgDiv = "";
+    if(!empty($img)) {
+        $imgDiv = '<img src="data/img/' . basename($img[0]) . '">';
+    }
+    $papers .= sprintf($paperDiv, $url, 'card-bg-'.$bg, $imgDiv, $title, date("d M Y", strtotime($date)));
 }
 
 $html = sprintf($base, $papers);

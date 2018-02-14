@@ -28,14 +28,28 @@ body {
 }
 .paper .image {
     border-radius: 4px 4px 0 0;
-    height: 110px;
+    height: 100%;
 }
-.paper .title {
+.paper .image > img {
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+    height: 100%;
+}
+.paper .content {
+    border-radius: 0 0 4px 4px;
+    position: inherit;
+    top: 110px;
+    width: 100%;
+    height: 90px;
+    background: rgba(255, 255, 255, 0.85);
+}
+.paper .content .title {
     padding: 10px;
     font-size: 14px;
     text-align: left;
 }
-.paper .date {
+
+.paper .content .date {
     position: inherit;
     right: 10px;
     bottom: 5px;
