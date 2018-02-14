@@ -14,6 +14,8 @@ $types = array(
     'snippet' => 'snippet',
 );
 
+// left: 402.58px; top: 330.74px; transform: rotate(332deg);
+
 $v = time();
 $base = file_get_contents("tpl/index.html");
 $base = str_replace('$v', $v, $base);
@@ -40,7 +42,10 @@ foreach ($files as $file) {
             continue;
     }
     $bg = isset($types[$type])?$types[$type]:0;
-    $papers .= sprintf($paperDiv, $url, 'card-bg-'.$bg, $title, date("d M Y", strtotime($date)));
+    $deg = rand(0, 360);
+    $style = "transform: rotate(".$deg."deg);";
+    $position = rand(0, 100) . "," . rand(0, 100);
+    $papers .= sprintf($paperDiv, $url, $style, $position, 'card-bg-'.$bg, $title, date("d M Y", strtotime($date)));
 }
 
 $html = sprintf($base, $papers);

@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="update_time" content="1518529416">
+    <meta name="update_time" content="1518588223">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>网易技术部的MySQL中文资料</title>
-    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1518529416">
-    <link rel="stylesheet" href="../../css/reset.css?v1518529416">
-    <link rel="stylesheet" href="../../css/md.css?v1518529416">
-    <link rel="stylesheet" href="../../css/module.css?v1518529416">
-    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1518529416">
-    <script src="../../dep/require.js?1518529416"></script>
+    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1518588223">
+    <link rel="stylesheet" href="../../css/reset.css?v1518588223">
+    <link rel="stylesheet" href="../../css/md.css?v1518588223">
+    <link rel="stylesheet" href="../../css/module.css?v1518588223">
+    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1518588223">
+    <script src="../../dep/require.js?1518588223"></script>
 </head>
 <body>
 <div class="md"><h1>网易技术部的MySql中文资料</h1>
@@ -392,7 +392,73 @@ set autocommit = {0|1}</code></pre>
 <li>将||视为字符串连接操作符(+),而不视为or</li>
 </ul>
 <h3>第九章 常用SQL技巧</h3>
-<h6>2018.02.13</h6></div>
+<h4>9.1 检索包含最大/最小值的行</h4>
+<pre><code class="language-sql" data-comment="">select student_name, min(test_score), max(test_score) from student group by student_name;</code></pre>
+<h4>9.2 巧用rand()/rand(h)提取随机行</h4>
+<pre><code class="language-sql" data-comment="">; 随机顺序检索数据行
+select * from tbl_name order by rand();
+select * from table1, tabl2 where a=b and c&lt;d order by rand() limit 1000;</code></pre>
+<h4>9.3 利用group by 的with rollup子句做统计</h4>
+<pre><code class="language-sql" data-comment="">select year, country, product, sum(profix) from sales group by year, country, product with rollup 
+limit 5;</code></pre>
+<p>rollup和order by互相排斥</p>
+<h4>9.4 用bit group functions做统计</h4>
+<pre><code class="language-sql" data-comment="">select cust_type, bit_or(id) from ta group by cust_type;
+select cust_type, bit_and(id) from ta group by cust_type;
+
+;每个月的访问天数
+SELECT year,month,BIT_COUNT(BIT_OR(1&lt;&lt;day)) AS days FROM t1 GROUP BY year,month;</code></pre>
+<h3>第十章 其他需注意的问题</h3>
+<h4>10.1 数据库名、表名大小写问题</h4>
+<h4>10.2 使用外键需注意的地方</h4>
+<p>在mysql中,InnoDB表支持对外部关键字约束条件的检查。</p>
+<h2>第二篇 优化篇</h2>
+<h3>第十一章 SQL优化</h3>
+<h4>11.1 优化SQL的一般步骤</h4>
+<ul>
+<li>通过show status和应用特点了解各种SQL的执行频率
+<ul>
+<li>Com_select 执行select的次数</li>
+<li>Com_insert 执行insert的次数</li>
+<li>Com_update 执行update的次数</li>
+<li>Com_delete 执行delete的次数</li>
+<li>Innodb_rows_read select返回的行数</li>
+<li>Innodb_rows_inserted insert插入的行数</li>
+<li>Innodb_rows_updated update更新的行数</li>
+<li>Innodb_rows_deleted delete删除的行数</li>
+<li>connections 试图连接mysql服务器的次数</li>
+<li>uptime 服务器工作时间</li>
+<li>slow_queries 慢查询的次数</li>
+</ul></li>
+<li>定位执行效率较低的SQL语句
+<ul>
+<li>通过慢查询日志定位那些执行效率较低的SQL语句</li>
+<li>使用show processlist命令查看当前mysql在进行的线程</li>
+</ul></li>
+<li>使用explain分析低效SQL的执行计划
+<ul>
+<li>select_type select类型</li>
+<li>table 输出结果集的表</li>
+<li>type 表示表的连接类型(system、ref、all...)</li>
+<li>possible_keys 表示查询时,可以使用的索引列</li>
+<li>keys 表示使用的索引</li>
+<li>key_len 索引的长度</li>
+<li>rows 扫描范围</li>
+<li>Extra 执行情况的说明和描述</li>
+</ul></li>
+<li>确定问题,并采取相当的优化措施</li>
+</ul>
+<h4>11.2 索引问题</h4>
+<ul>
+<li>索引的存储分类</li>
+</ul>
+<p>myisam表的数据文件和索引文件是自动分开的;</p>
+<p>innodb的数据和索引是存储在一个表空间里面,但可以有多个文件组成</p>
+<p>索引的存储类型目前只有btree和hash,与表的模式相关</p>
+<p>myisam-》btree、innodb-》btree、memory/heap-》hash、btree</p>
+<p>mysql目前不支持函数索引,只能对列的前一部分进行索引</p>
+<pre><code class="language-sql" data-comment="">create index ind_test on table1(name(5));</code></pre>
+<h6>2018.02.14</h6></div>
 <script >
     requirejs(['../../js/conf/r'], function(rc) {
         requirejs(['../js/html']);

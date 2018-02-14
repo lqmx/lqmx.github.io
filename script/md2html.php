@@ -43,6 +43,7 @@ else {
         $file_md5 = md5($markdown);
         if(isset($file_flag[$url]) and $file_flag[$url] == $file_md5) continue;
         $file_flag[$url] = $file_md5;
+        echo $filename, PHP_EOL;
         $html = $parsedown->text($markdown);
         $html = sprintf($base, $filename, $html);
         file_put_contents($config['html_dir'].$url.".html", $html);
