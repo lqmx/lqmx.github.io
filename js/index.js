@@ -1,6 +1,6 @@
-define(function (require) {
-    var $ = require('jquery'),
-        Drag = require('../../module/drag/Drag');
+// define(function (require) {
+//     var $ = require('jquery'),
+//         Drag = require('../../module/drag/Drag');
     $(function () {
         var htmlDir = "/data/html/";
         var winHeight = $(document).height(),
@@ -13,18 +13,17 @@ define(function (require) {
         var $paper = $('.paper');
 
         $paper.each(function (k, v) {
-            var transformStyle = $(v).css('transform');
-            var position = $(v).attr('data-position');
-            position = position.split(',');
-            paperInfo.push({
-                wr: position[0],
-                hr: position[1],
-                transform: transformStyle,
-            });
-
+            var transformStyle = "rotate("+(Math.random()*360).toFixed(2)+"deg)";
+            var paper = {
+                wr: Math.random().toFixed(2),
+                hr: Math.random().toFixed(2),
+                transform: transformStyle
+            };
+            paperInfo.push(paper);
             $(v).css({
-                left: (winWidth-160) * position[0] / 100 + 'px',
-                top:  (winHeight-220) * position[1] / 100 + 'px'
+                left: ((winWidth-160) * paper.wr).toFixed(2) + 'px',
+                top:  ((winHeight-220) * paper.hr).toFixed(2) + 'px',
+                transform: paper.transform
             }).show();
         });
         $paper.each(function (k, v) {
@@ -57,4 +56,4 @@ define(function (require) {
             Drag.bind($(v));
         })
     });
-});
+// });

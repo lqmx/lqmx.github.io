@@ -9,16 +9,19 @@
     <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v$v">
     <link rel="stylesheet" href="css/reset.css?v$v">
     <link rel="stylesheet" href="css/style.css?v$v">
-    <script src="dep/require.js?$v"></script>
+    <!--<script src="dep/require.js?$v"></script>-->
 </head>
 <body>
 <div class="table">
     %s
 </div>
-<script >
-    requirejs(['js/conf/r'], function(rc) {
-        requirejs(['../js/index']);
-    });
-</script>
+<script src="dep/jquery.js?v$v"></script>
+<script src="module/drag/Drag.o.js?v$v"></script>
+<script src="js/index.js?v$v"></script>
+<!--<script >-->
+    <!--requirejs(['js/conf/r'], function(rc) {-->
+        <!--requirejs(['../js/index']);-->
+    <!--});-->
+<!--</script>-->
 </body>
 </html>

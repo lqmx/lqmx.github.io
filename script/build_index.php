@@ -42,10 +42,7 @@ foreach ($files as $file) {
             continue;
     }
     $bg = isset($types[$type])?$types[$type]:0;
-    $deg = rand(0, 360);
-    $style = "transform: rotate(".$deg."deg);";
-    $position = rand(0, 100) . "," . rand(0, 100);
-    $papers .= sprintf($paperDiv, $url, $style, $position, 'card-bg-'.$bg, $title, date("d M Y", strtotime($date)));
+    $papers .= sprintf($paperDiv, $url, 'card-bg-'.$bg, $title, date("d M Y", strtotime($date)));
 }
 
 $html = sprintf($base, $papers);
