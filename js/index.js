@@ -7,7 +7,6 @@
             winWidth = $(document).width();
         var timer = null, second = 0;
         var paperState = Drag.PAPER_STATE_DRAG;
-
         var paperInfo = [];
 
         var $paper = $('.paper');
@@ -28,15 +27,21 @@
         });
         $paper.each(function (k, v) {
             $(v).hover(function () {
+                $(v).css({
+                    "z-index": 2
+                });
                 timer = setInterval(function () {
                     if (Drag.isDrag === true) return;
-                    if (++second > 1) {
-                        $(v).css({transform: "rotate(0deg) scale(1.1)"});
+                    if (++second >= 1) {
+                        $(v).css({
+                            transform: "rotate(0deg) scale(1.1)"
+                        });
                         paperState = Drag.PAPER_STATE_CLICK;
                     }
                 }, 1000);
             }, function () {
                 $(this).css({
+                    "z-index": 1,
                     transform: paperInfo[k].transform
                 });
                 clearInterval(timer);

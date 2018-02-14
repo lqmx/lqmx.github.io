@@ -9,11 +9,13 @@ var Drag = (function () {
         self.dragDiv = null;
         self.containerW = window.innerWidth;
         self.containerH = window.innerHeight;
+        self.target = null;
 
         function divDrop() {
             $(window).off('mousemove');
             self.dragDiv.css({'cursor': 'pointer'});
             self.isDrag = false;
+            self.target.css({'z-index': 1});
         }
 
         function divGrab(e) {
@@ -21,7 +23,8 @@ var Drag = (function () {
             self.dragDiv = $(this);
             self.offsetX = e.clientX - self.dragDiv[0].offsetLeft;
             self.offsetY = e.clientY - self.dragDiv[0].offsetTop;
-            $(this).css({'z-index': 2, 'cursor': 'move'}).siblings().css({'z-index': 1});
+            $(this).css({'z-index': 2, 'cursor': 'move'});
+            self.target = $(this);
             $(window).mousemove(divMove);
             $(window).mouseup(divDrop);
         }
