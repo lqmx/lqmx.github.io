@@ -3,9 +3,10 @@ body {
     font-size: 16px;
     line-height: 24px;
 }
+
 .md {
     padding: 20px;
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.85);
     margin: 80px auto;
     width: 84%;
     height: 90%;

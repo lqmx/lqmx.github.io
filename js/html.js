@@ -1,6 +1,7 @@
 define(function (require) {
     var $ = require('jquery'),
         KeyBoard = require('../js/comm/keyevent'),
+        noteData = require('../../js/notes.js'),
         CmdBar = require('../module/cmdbar/CmdBar'),
         DrawBoard = require('../module/drawboard/DrawBoard'),
         Drag = require('../module/drag/Drag'),
@@ -9,6 +10,17 @@ define(function (require) {
         hljs = require('highlight/highlight.min');
 
     $(function () {
+        var $container = $('body');
+        var pageKey = window.location.pathname.substr(window.location.pathname.lastIndexOf('/')+1);
+        if(noteData[pageKey]['isBg']) {
+            $container.attr('style', 'display:block;background-image:url(../../data/img/'+noteData[pageKey]['bg']+');background-size: cover');
+        } else {
+            $container.addClass(noteData[pageKey]['bgColor']);
+            var bgColor = $container.css('background-color');
+            $container.removeClass(noteData[pageKey]['bgColor']).css({
+                'background': 'rgba' + bgColor.substring(3, bgColor.length - 1) + ', .4)'
+            });
+        }
         CmdBar.init([{
             cmd: "draw",
             des: 'open the draw board',

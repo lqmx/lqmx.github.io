@@ -16,17 +16,8 @@ if(empty($file_flag)) {
     $file_flag = json_decode($file_flag, true);
 }
 
-if($argc >=2 ) {
-    $files = array_splice($argv, 1);
-    foreach ($files as $md) {
-        list(, $type, $url, $filename) = explode('.', basename($md, '.md'));
-        $markdown = file_get_contents($config['md_dir'].$md.".md");
-        $html = $parsedown->text($markdown);
-        $html = sprintf($base, $filename, $html);
-        file_put_contents($config['html_dir'].$url.".html", $html);
-    }
-}
-else {
+$all = ($argc >= 2 and $argv[1] == 'all') ? true : false;
+
     $mds = glob($config['md_dir']."*.md");
     $readme = "../README.md";
     $mds[] = $readme;
@@ -41,13 +32,12 @@ else {
         }
         $markdown = file_get_contents($md);
         $file_md5 = md5($markdown);
-        if(isset($file_flag[$url]) and $file_flag[$url] == $file_md5) continue;
+        if(!$all and isset($file_flag[$url]) and $file_flag[$url] == $file_md5) continue;
         $file_flag[$url] = $file_md5;
         echo $filename, PHP_EOL;
         $html = $parsedown->text($markdown);
         $html = sprintf($base, $filename, $html);
         file_put_contents($config['html_dir'].$url.".html", $html);
     }
-}
 
 file_put_contents(".fileflag", json_encode($file_flag));
