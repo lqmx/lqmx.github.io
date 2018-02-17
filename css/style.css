@@ -1,5 +1,6 @@
 body {
-    background: #5d4037;
+    /*background: #5d4037;*/
+    background: url(../img/bg3.jpeg) repeat;
 }
 .table {
     width: 90%;
@@ -66,11 +67,9 @@ body {
     right: 6px;
     opacity: .4;
 }
-.paper .goto:after {
-    content: '>';
-    margin-left: 5px;
-    font-weight: bold;
-    color: #6c6c6c;
+.paper .goto>i {
+    position: inherit;
+    padding: 2px;
 }
 .paper .goto:hover {
     opacity: .6;
