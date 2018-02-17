@@ -96,8 +96,23 @@ body {
 }
 
 .md img {
-    display: block;
+    padding: 5px;
     max-width: 100%;
+}
+
+.md img.s43 {
+    width: 200px;
+    height: 150px;
+}
+
+.md img.m43 {
+    width: 400px;
+    height: 300px;
+}
+
+.md img.l43 {
+    width: 800px;
+    height: 600px;
 }
 
 .md a {

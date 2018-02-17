@@ -1190,13 +1190,23 @@ class Parsedown
             return;
         }
 
+        $text = $Link['element']['text'];
+        $cls = explode('.', $text);
+        $cls = $cls[count($cls) - 1];
+
+        $alt = $text;
+        if(!empty($cls)) {
+            $alt = substr($text, 0, strlen($text) - strlen($cls) - 1);
+        }
+
         $Inline = array(
             'extent' => $Link['extent'] + 1,
             'element' => array(
                 'name' => 'img',
                 'attributes' => array(
                     'src' => $Link['element']['attributes']['href'],
-                    'alt' => $Link['element']['text'],
+                    'alt' => $alt,
+                    'class' => $cls,
                 ),
             ),
         );
