@@ -115,6 +115,11 @@ body {
     height: 600px;
 }
 
+.md img.m23 {
+    width: 222px;
+    height: 333px;
+}
+
 .md a {
     color: #42a5f5;
     text-decoration: none;
