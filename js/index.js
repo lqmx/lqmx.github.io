@@ -26,6 +26,10 @@
         });
         $paper.each(function (k, v) {
             var url = window.location.origin + htmlDir + $(v).attr('data-url');
+            var type = $(v).attr('data-type');
+            if(type == 'comic') {
+                $(v).hide();
+            }
             $(v).click(function () {
                 if (isToPage === true
                     && !Drag.hasMoving()) {

@@ -46,7 +46,7 @@ foreach ($files as $file) {
     if(!empty($img)) {
         $imgDiv = '<img src="data/img/' . basename($img[0]) . '" draggable="false">';
     }
-    $papers .= sprintf($paperDiv, $url, $bg, $imgDiv, $title, date("d M Y", strtotime($date)));
+    $papers .= sprintf($paperDiv, $type, $url, $bg, $imgDiv, $title, date("d M Y", strtotime($date)));
     $notes[$url] = array(
         'type' => $type,
         'url' => $url,
