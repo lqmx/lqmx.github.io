@@ -1,2 +1,5 @@
 /.idea/
 /data/md/*
+app/dailycard/css/*
+app/dailycard/js/*
+app/dailycard/dep/*

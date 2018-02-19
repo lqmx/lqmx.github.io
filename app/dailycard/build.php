@@ -8,22 +8,24 @@ $htmlMain = <<<HTML
 <head>
     <meta charset="UTF-8">
     <title>Daily Card</title>
-    <link rel="stylesheet" href="build/build.css?v$v">
+    <link rel="stylesheet" href="build.css?v$v">
 </head>
 <body>
 <div class="table">
 %s
 </div>
-<script src="build/build.js?v$v"></script>
+<script src="build.js?v$v"></script>
 </body>
 </html>
 HTML;
+
+
 
 $htmlCard = <<<CARD
 <div class="card">
         <div class="circle"></div>
         <div class="main">
-            <img src="img/%s" alt="" draggable="false">
+            <img src="../img/%s" alt="" draggable="false">
         </div>
         <div class="footer">
             <div class="content">%s</div>
@@ -51,7 +53,7 @@ if(count($dailyCard)%3==0) {
 
 $html = sprintf($htmlMain, $html);
 
-file_put_contents("index.html", $html);
+file_put_contents("build/index.html", $html);
 
 
 // build css
@@ -60,7 +62,7 @@ $css = array(
     "css/style.css",
 );
 
-$cssContent = "";
+$cssContent = "/* build time " . date("Y-m-d h:i:s", intval($v)) ." */". PHP_EOL;
 foreach ($css as $v) {
     $cssContent .= PHP_EOL . PHP_EOL . "/* build $v */" . PHP_EOL. PHP_EOL;
     $cssContent .= file_get_contents($v);
@@ -73,7 +75,7 @@ $js = array(
     "js/Drag.js",
     "js/index.js",
 );
-$jsContent = "";
+$jsContent = "/* build time " . date("Y-m-d h:i:s", intval($v)) ." */". PHP_EOL;
 foreach($js as $v) {
     $jsContent .= PHP_EOL . PHP_EOL . "/* build $v */". PHP_EOL . PHP_EOL;
     $jsContent .= file_get_contents($v);
