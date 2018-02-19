@@ -5,9 +5,8 @@
         var htmlDir = "/data/html/";
         var winHeight = $(document).height(),
             winWidth = $(document).width();
-        var timer = null, second = 0;
-        var paperState = Drag.PAPER_STATE_DRAG;
         var paperInfo = [];
+        var isToPage = false;
 
         var $paper = $('.paper');
 
@@ -26,34 +25,26 @@
             }).show();
         });
         $paper.each(function (k, v) {
-            $(v).hover(function () {
-                $(v).css({
-                    "z-index": 2
-                });
-                timer = setInterval(function () {
-                    if (Drag.isDrag === true) return;
-                    if (++second >= 1) {
-                        $(v).css({
-                            transform: "rotate(0deg) scale(1.1)"
-                        });
-                        paperState = Drag.PAPER_STATE_CLICK;
-                    }
-                }, 1000);
-            }, function () {
-                $(this).css({
-                    "z-index": 1,
-                    transform: paperInfo[k].transform
-                });
-                clearInterval(timer);
-                second = 0;
-                paperState = Drag.PAPER_STATE_DRAG;
-            });
-
             var url = window.location.origin + htmlDir + $(v).attr('data-url');
             $(v).click(function () {
-                if (paperState === Drag.PAPER_STATE_CLICK) {
+                if (isToPage === true
+                    && !Drag.hasMoving()) {
                     window.location.href = url;
+                } else {
+                    $(v).css({
+                        "z-index": 2,
+                        transform: "rotate(0deg) scale(1.1)"
+                    });
+                    isToPage = true;
                 }
+            });
+            $(v).mouseleave(function () {
+                if(Drag.getDragStatus() == Drag.DRAG_STATUS.DRAGING) return;
+                $(this).css({
+                    transform: paperInfo[k].transform,
+                    "z-index": 1
+                });
+                isToPage = false;
             });
             $(v).find('.goto').click(function () {
                 window.location.href = url;
