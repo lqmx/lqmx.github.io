@@ -38,6 +38,15 @@
                     isToPage = true;
                 }
             });
+            $(v).hover(function () {
+                $(this).css({
+                    "z-index": 2
+                });
+            }, function () {
+                $(this).css({
+                    "z-index": 1
+                });
+            });
             $(v).mouseleave(function () {
                 if(Drag.getDragStatus() == Drag.DRAG_STATUS.DRAGING) return;
                 $(this).css({
