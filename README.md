@@ -62,4 +62,4 @@ note is lazying lazying...
 1. 在`data/md`文件夹里创建markdown笔记
 2. 运行构建脚本`./build.sh`
 
-###### 2018.02.19
+###### 2018.02.20
