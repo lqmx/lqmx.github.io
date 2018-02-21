@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="update_time" content="1518872660">
+    <meta name="update_time" content="1519220226">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>网易技术部的MySQL中文资料</title>
-    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1518872660">
-    <link rel="stylesheet" href="../../css/reset.css?v1518872660">
-    <link rel="stylesheet" href="../../css/md.css?v1518872660">
-    <link rel="stylesheet" href="../../css/module.css?v1518872660">
-    <link rel="stylesheet" href="../../css/c.css?v1518872660">
-    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1518872660">
-    <script src="../../dep/require.js?1518872660"></script>
+    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1519220226">
+    <link rel="stylesheet" href="../../css/reset.css?v1519220226">
+    <link rel="stylesheet" href="../../css/md.css?v1519220226">
+    <link rel="stylesheet" href="../../css/module.css?v1519220226">
+    <link rel="stylesheet" href="../../css/c.css?v1519220226">
+    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1519220226">
+    <script src="../../dep/require.js?1519220226"></script>
 </head>
 <body>
     <div class="md"><h1>网易技术部的MySql中文资料</h1>
@@ -459,7 +459,133 @@ SELECT year,month,BIT_COUNT(BIT_OR(1&lt;&lt;day)) AS days FROM t1 GROUP BY year,
 <p>myisam-》btree、innodb-》btree、memory/heap-》hash、btree</p>
 <p>mysql目前不支持函数索引,只能对列的前一部分进行索引</p>
 <pre><code class="language-sql" data-comment="">create index ind_test on table1(name(5));</code></pre>
-<h6>2018.02.14</h6></div>
+<ul>
+<li>mysql如何使用索引</li>
+</ul>
+<p>下列情况下,mysql不会使用已有的索引</p>
+<ol>
+<li>如果么mysql估计索引比扫描全表更慢</li>
+<li>如果使用heap表并且where条件中不用=索引列,其他&gt;,&lt;,&gt;=,&lt;=均不适用索引</li>
+<li>如果不是索引列的第一部分</li>
+<li>如果like是以%开始的</li>
+<li>对where后边条件为字符串的一定要加引号,字符串如果是数字mysql会自动转为
+字符串,但是不使用索引</li>
+</ol>
+<ul>
+<li>查看索引的使用情况</li>
+</ul>
+<p>如果索引正在工作,handler_read_key的值将很高</p>
+<p>如果索引运行低效,则handler_read_rnd_next的值将较高</p>
+<pre><code class="language-sql" data-comment="">show status like 'Handler_read%';</code></pre>
+<h4>11.3 两个简单实用的优化方法</h4>
+<ul>
+<li>定期分析表
+<ul>
+<li>analyze table 用于肥西和存储表的关键字分布</li>
+<li>check table 检查一个或多个表是否由错误</li>
+<li>checksum table 报告一个表校验和</li>
+</ul></li>
+<li>使用optimize table 重新利用未使用的空间,并整理数据文件的碎片</li>
+</ul>
+<h4>11.4 常用SQL的优化</h4>
+<ul>
+<li>大批量插入数据</li>
+</ul>
+<ol>
+<li>对于myisam,
+<pre><code class="language-sql" data-comment="">alter table tblname disable keys;
+; loading the data
+; ...
+alter table tblname enable keys;</code></pre></li>
+<li>对于innodb
+2.1 将导入的数据按照主键的顺序排列
+2.2 在导入数据前执行<code class="inline-code">set unique_check=0;</code>,关闭唯一性校验,导入后执行<code class="inline-code">set unique_check=1;</code>
+2.3 导入前执行<code class="inline-code">set autocommit=0;</code>,关闭自动提交,导入结束后执行<code class="inline-code">set autocommit=1;</code></li>
+</ol>
+<ul>
+<li>优化insert语句</li>
+</ul>
+<ol>
+<li>同一客户数据批量插入
+<pre><code class="language-sql" data-comment="">insert into test values(1, 2), (1, 3), (1, 4)...</code></pre></li>
+<li>不同客户使用insert delayed</li>
+<li>将索引文件和数据文件分在不同的磁盘存放</li>
+<li>批量插入,可增加bulk_insert_buffer_size变量值(只能用与myisam)</li>
+<li>从一个文本文件装载一个表时,使用<code class="inline-code">load data infile</code></li>
+<li>根据情况使用replace替代insert</li>
+<li>根据情况使用ignore关键字忽略重复记录</li>
+</ol>
+<ul>
+<li>
+<p>优化group by语句
+默认情况下,mysql排序所有group by col1,col2,...可以使用order by null禁止排序</p>
+<pre><code class="language-sql" data-comment="">insert into foo select a, count(*) from bar group by a order by null;</code></pre>
+</li>
+<li>优化order by语句</li>
+</ul>
+<p>下列sql可以使用索引:</p>
+<pre><code class="language-sql" data-comment="">select * from t1 order by key_part1, key_part2, ...;
+select * from t1 where key_part1 order by key_part1 desc, key_part2 desc;
+select * from t1 order by key_part1 desc, key_part2 desc;</code></pre>
+<p>下列则不适用索引:</p>
+<pre><code># order by的字段混合asc和deesc
+select * from t1 order by key_part1 desc, key_part2 asc;
+# 用于查询行的关键字与order by中使用的不相同
+select * from t1 where key2=constant order by key1;
+# 对不同的关键字使用order by
+select * from t1 order by key1, key2;</code></pre>
+<ul>
+<li>优化join语句</li>
+</ul>
+<p>查询所有没有订单记录的用户</p>
+<pre><code class="language-sql" data-comment=""># 子查询
+select * from customerinfo where customerid not in (select customerid from salesinfo);
+# join 更有效率(不需要临时表)
+select * from customerinfo left join salesinfo on customerinfo.customerid=salesinfo.customerid
+where salesinfo.customerid is null</code></pre>
+<ul>
+<li>优化or</li>
+</ul>
+<p>如果要利用索引,则or之间的每个条件列都要加索引</p>
+<ul>
+<li>查询优先还是更新优先</li>
+</ul>
+<p>对于innodb,语句的执行是由获得行锁的顺序决定的</p>
+<p>mysql默认的调度策略</p>
+<ol>
+<li>写入操作优先于读取操作</li>
+<li>对某张表写入同一时刻只能发生一次,按照到达的顺序处理</li>
+<li>读取可以多个操作同时进行</li>
+</ol>
+<p>修改调度(myisam)</p>
+<ol>
+<li>low_priority(delete, insert, load data, replace, update)</li>
+<li>high_priority(select, insert)</li>
+<li>delayed(insert, replace)</li>
+</ol>
+<ul>
+<li>使用sql提示</li>
+</ul>
+<p><code class="inline-code">select sql_buffer_results ...</code> 强制mysql生成一个临时结果集,尽早释放各种锁</p>
+<ol>
+<li>use index 提供给你希望mysql去参考的索引列表,让mysql不再考虑其他可用的索引</li>
+<li>ignore index 让mysql忽略一个或多个索引</li>
+<li>force index 强制指定索引</li>
+</ol>
+<ul>
+<li>其他优化措施</li>
+</ul>
+<ol>
+<li>使用持久的链接数据库避免连接开销</li>
+<li>经常检查所有查询确实使用了必要的索引</li>
+<li>避免在频繁更新的表中执行复杂的select查询</li>
+<li>对没有删除操作的myisam表,插入和查询可以并行进行</li>
+<li>充分利用列有默认值的事实</li>
+<li>对经常访问的可以重构的数据使用内存表</li>
+<li>通过复制可以提高某些操作的性能</li>
+<li>表字段尽量不适用自增长变量</li>
+</ol>
+<h6>2018.02.21</h6></div>
 <script >
     requirejs(['../../js/conf/r'], function(rc) {
         requirejs(['../js/html']);
