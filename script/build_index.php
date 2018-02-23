@@ -27,6 +27,12 @@ $papers = "";
 $readme = "README";
 $files[] = $readme.".md";
 $notes = [];
+$notes = file_get_contents("./notes.json");
+if(!empty($notes)) {
+    $notes = json_decode($notes, true);
+} else {
+    $notes = [];
+}
 foreach ($files as $file) {
     $filename = basename($file, '.md');
     if($filename == $readme) {
@@ -47,15 +53,19 @@ foreach ($files as $file) {
         $imgDiv = '<img src="data/img/' . basename($img[0]) . '" draggable="false">';
     }
     $papers .= sprintf($paperDiv, $type, $url, $bg, $imgDiv, $title, date("d M Y", strtotime($date)));
-    $notes[$url] = array(
-        'type' => $type,
-        'url' => $url,
-        'title' => $title,
-        'date' => $date,
-        'isBg' => !empty($img),
-        'bg' => !empty($img) ? basename($img[0]) : '',
-        'bgColor' => $bg,
-    );
+
+
+    if(!isset($notes[$url])){
+        $notes[$url] = array(
+            'type' => $type,
+            'url' => $url,
+            'title' => $title,
+            'date' => $date,
+            'isBg' => !empty($img),
+            'bg' => !empty($img) ? basename($img[0]) : '',
+            'bgColor' => $bg,
+        );
+    }
 }
 
 $html = sprintf($base, $papers);
@@ -67,3 +77,4 @@ define(function (require) {
 NOTEDATA;
 
 file_put_contents("../js/notes.js", sprintf($notesData, json_encode($notes)));
+file_put_contents("./notes.json", json_encode($notes));
