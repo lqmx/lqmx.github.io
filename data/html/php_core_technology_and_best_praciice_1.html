@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="update_time" content="1519482708">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PHP核心技术与最佳实践 第一章 面向对象思想的核心概念</title>
+    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1519482708">
+    <link rel="stylesheet" href="../../css/reset.css?v1519482708">
+    <link rel="stylesheet" href="../../css/md.css?v1519482708">
+    <link rel="stylesheet" href="../../css/module.css?v1519482708">
+    <link rel="stylesheet" href="../../css/c.css?v1519482708">
+    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1519482708">
+    <script src="../../dep/require.js?1519482708"></script>
+</head>
+<body>
+    <div class="md"><h1>第一章 面向思想的核心概念</h1>
+<h6>2018.02.24</h6>
+<p>面向对象程序设计是一种程序设计范型，同时也是一种程序开发方法。它将对象作为程序的基本单元，
+将程序和数据封装其中，以提高软件的重用性、灵活性和可扩展性。</p>
+<h2>1.1 面向对象的“形”与“本”</h2>
+<p>类是对象的抽象组织，对象是类的具体存在</p>
+<h3>1.1.1 对象的“形”</h3>
+<pre><code class="language-php" data-comment="">class person {
+    public $name;
+    pulbic $gender;
+    public function say() {
+        echo $this-&gt;&gt;name, " is ", $this-&gt;gender;
+    }
+}
+
+$student = new person();
+$student-&gt;name = 'Tom';
+$student-&gt;gender = 'male';
+$student-&gt;say();
+$teacher = new person();
+$teacher-&gt;name = 'Kate';
+$teacher-&gt;gender = 'female';
+$teacher-&gt;say();
+
+print_r((array)$student);
+var_dump($student);
+
+$str = serialize($student);
+echo $str, PHP_EOL;
+file_put_contents('store.txt', $str);
+
+$str = file_get_contents('store.txt');
+$student=unserialize($str);
+$student-&gt;say();</code></pre>
+<ol>
+<li>类定义了一系列的属性和方法，并提供了实际的操作细节</li>
+<li>对象含有类属性的具体值，是类的实例化</li>
+<li>类与对象的关系类似一种服务与被服务、加工与被加工的关系</li>
+</ol>
+<h3>1.1.2 对象的“本”</h3>
+<pre><code class="language-c" data-comment="">#zend/zend.h
+typedef union_zvalue_value {
+    long lval;
+    double dval;
+    struct {
+        char *val;
+        int len;
+    } str;
+    HashTable *ht;
+    zend_object_value obj;
+} zvalue_value;</code></pre>
+<p>在PHP5中，对象在底层的实现是采用“属性数组+方法数组”来实现的。</p>
+<pre><code class="language-c" data-comment="">#zend/zend.h
+typedef struct_zend_object {
+    zend_class_entry *ce; // 存储该对象的类结构
+    HashTable *properties; // 存放对象属性
+    HashTable *guards; // 阻止递归调用
+} zend_object;</code></pre>
+<h3>1.1.3 对象与数组</h3>
+<p>对象和数组在内容上是一样的，区别在于对象还有个指针，指向了它所属的类。</p>
+<h4>1.1.4 对象与类</h4>
+<p>类是定义一系列属性和操作的模板，而对象则把属性进行具体化，然后交给类处理。</p>
+<p>对象就是数据，本身不包含方法。</p>
+<p>方法描述不同属性所导致的不同表现。</p>
+<p>类和对象是不可分割的，有对象就必定有一个类与其相对应。</p>
+<h2>1.2 魔术方法的应用</h2>
+<h3>1.2.1 get和set方法</h3>
+<pre><code class="language-php" data-comment="">class Account {
+    private $user = 1;
+    private $pwd = 2;
+    public function __set($name, $value) {
+        echo "Setting $name to $value\r\n";
+        $this-&gt;$name = $value;
+    }
+    public function __get($name) {
+        if(!isset($this-&gt;$name)) {
+            echo "no setting";
+            $this-&gt;&gt;$name = "default";
+         }
+         return $this-&gt;$name;
+    }
+}
+$a = new Account();
+echo $a-&gt;user;
+$a-&gt;name = 5;;
+echo $a-&gt;name;
+echo $a-&gt;big;</code></pre>
+<h3>1.2.2 call和callStatic方法</h3>
+<pre><code class="language-php" data-comment="">abstract class ActiveRecord {
+    protected static $table;
+    protected $fieldvalues;
+    public $select;
+    public static function findById($id) {
+        $query = "select * from "
+            . static::$table
+            . "where id = $id";
+        return self::createDomain($query);
+    }
+    function __get($fieldname) {
+        return $this-&gt;fieldvalues[$fieldname];
+    }
+    public static function __callStatic($method, $args) {
+        $field = preg_replace('/^findBy(\w*)$/', '${1}', $method);
+        $query = "select * from "
+            .static::$table
+            . " where $field = '{$args[0]}'";
+        return self::createDomain($query);
+    }
+    private static function createDomain($query) {
+        $klass = get_called_class();
+        $domain = new $klass();
+        $domain-&gt;fieldvalues = array();
+        $domain-&gt;select = $query;
+        foreach($klass::$fields as $field =&gt; $type) {
+            $domain-&gt;fieldvalues[$field] = 'TODO:set from sql result ';
+        }
+        return $domain;
+    }
+}
+class Customer extends ActiveRecord {
+    protected static $table = 'custdb';
+    protected static $fields = array(
+        'id' =&gt; 'int',
+        'emial' =&gt; 'varchar',
+        'lastname' =&gt; 'varchar',
+    );
+}
+class Sales extends ActiveRecord {
+    protected static $table = 'salesdb';
+    protected static $fields = array(
+        'id' =&gt; 'int',
+        'item' =&gt; 'varchar',
+        'qty' =&gt; 'int',
+    );
+}
+echo Customer::findById(123)-&gt;select, PHP_EOL; // select * from custdbwhere id = 123
+echo Customer::findById(123)-&gt;email, PHP_EOL; // TODO:set from sql result
+echo Sales::findById(321)-&gt;select, PHP_EOL; // select * from salesdbwhere id = 321
+echo Customer::findByLastname('Denoncourt')-&gt;select, PHP_EOL; // select * from custdb where Lastname = 'Denoncourt'</code></pre>
+<h3>1.2.3 __toString方法</h3>
+<pre><code class="language-php" data-comment="">class Account {
+    public $user = 1;
+    private $pwd = 2;
+    public function __toString() {
+        return "{$this-&gt;user}, {$this-&gt;pwd}";
+    }
+}
+$a = new Account();
+echo $a, PHP_EOL;
+print_r($a);</code></pre>
+<h2>1.3 继承与多态</h2>
+<p>继承与多态是对类的复用，一个是类级别的复用，一个是方法级别的复用</p>
+<h3>1.3.1 类的组合与继承</h3>
+<p>继承是一种“是、像”的关系，而组合是一种“需要”的关系</p>
+<p>继承存在的问题：</p>
+<ol>
+<li>继承破坏了封装性</li>
+<li>继承是紧耦合的</li>
+<li>继承扩展复杂</li>
+<li>不恰当地使用继承可能违反现实世界中的逻辑</li>
+</ol>
+<p>如何使用继承：</p>
+<ol>
+<li>精心设计专门用于被继承的类，继承树的抽象层应该比较稳定，一般不多于三层</li>
+<li>对于不是专门用户被继承的类，禁止其被继承</li>
+<li>优先考虑用组合关系提高代码的可重用性</li>
+<li>子类是一种特殊的类型，而不只是父类的一个角色</li>
+<li>子类扩展，而不是覆盖或者使父类的功能失效</li>
+<li>底层代码多用组合，顶层/业务层代码多用继承</li>
+</ol>
+<h3>1.3.2 各种语言中的多态</h3>
+<pre><code class="language-php" data-comment="">class employee {
+    protected function working()
+    {
+        echo "working", PHP_EOL;
+    }
+}
+class teacher extends employee {
+    public function working()
+    {
+        echo "teacher working", PHP_EOL;
+    }
+}
+class coder extends employee {
+    public function working() {
+        echo "coder working", PHP_EOL;
+    }
+}
+function doprint($obj) {
+    if(get_class($obj) == 'employee') {
+        echo 'ERROR', PHP_EOL;
+    } else {
+        $obj-&gt;working();
+    }
+}
+doprint(new teacher());
+doprint(new coder());
+doprint(new employee());
+function doprint2(employee $i) {
+    $i-&gt;working();
+}
+$a = new teacher();
+$b = new teacher();
+doprint2($a);
+doprint2($b);</code></pre>
+<p>区别是否是多态的关键在于看对象是否属于同一类型。如果把它们看做同一种类型，调用相同的函数，
+返回了不同的结果，那么他们属于多态。</p>
+<p>多态的本质就是if...else...，只不过实现的层级不同</p>
+<h2>1.4 面向接口编程</h2>
+<h3>1.4.1 接口的作用</h3>
+<p>采用一个特定接口的所有代码都知道对于那个接口会调用什么方法。</p>
+<pre><code class="language-php" data-comment="">interface mobile {
+    public function run();
+}
+class plain implements mobile {
+    public function run() {
+        echo "plain";
+    }
+    public function fly() {
+        echo "fly";
+    }
+}
+class car implements mobile {
+    public function run() {
+        echo 'car';
+    }
+}</code></pre>
+<h3>1.4.2 对PHP接口的思考</h3>
+<pre><code class="language-php" data-comment="">trait Hello {
+    public function sayHello() {
+        echo 'Hello';
+    }
+}
+trait World {
+    public function sayWorld() {
+        echo 'World';
+    }
+}
+class MyHelloWorld {
+    use Hello, World;
+    public function sayExctamationMark() {
+        echo ".";
+    }
+}
+$o = new MyHelloWorld();
+$o-&gt;sayHello();
+$o-&gt;sayWorld();
+$o-&gt;sayExctamationMark();</code></pre>
+<ol>
+<li>接口作为一种规范和契约存在</li>
+<li>接口只是一种声明，一旦使用interface关键字，就应该实现它</li>
+</ol>
+<p>PHP接口存在两个不足，没有契约限制，缺少足够多的内部接口</p>
+<h2>1.5 反射</h2>
+<p>反射直观理解就是根据到达地找到出发地和来源。</p>
+<h3>1.5.1 如何使用反射API</h3>
+<pre><code class="language-php" data-comment="">$reflect = new ReflectionObject(new teacher());
+$props  = $reflect-&gt;getProperties();
+foreach($props as $prop) {
+    echo $prop-&gt;getName(), PHP_EOL;
+}
+$m = $reflect-&gt;getMethods();
+foreach ($m as $prop) {
+    echo $prop-&gt;getName(), PHP_EOL;
+}
+var_dump(get_object_vars(new teacher())); // 对象属性的关联数组
+var_dump(get_class_vars(get_class(new teacher()))); // 类属性
+var_dump(get_class_methods(get_class(new teacher()))); // 类方法</code></pre>
+<h3>1.5.2 反射有什么作用</h3>
+<p>反射可以用于文档生成</p>
+<h2>1.6 异常和错误处理</h2>
+<h3>1.6.1 如何使用异常处理机制</h3>
+<p>PHP通常无法自动捕获有意义的异常，它吧所有不正常的情况都视为错误</p>
+<p>下面三种场景下会用到异常处理机制</p>
+<ol>
+<li>对程序的悲观预测</li>
+<li>程序的需要和对业务的关注</li>
+<li>语言级别的健壮性要求</li>
+</ol>
+<h3>1.6.2 怎样看PHP的异常</h3>
+<h3>1.6.3 PHP的错误级别</h3>
+<p>deprecated, notice, warning, fetal error, prase error...</p>
+<h3>1.6.4 PHP中的错误处理机制</h3>
+<p>PHP有一套错误处理机制，可以用set_error_handler接管PHP错误处理，也可以使用trgger_error函数
+主动抛出一个错误</p>
+<pre><code class="language-php" data-comment="">function customError($errno, $errstr, $errfile, $errline) {
+    echo "erro code {$errno}, {$errstr}", PHP_EOL;
+    echo "file line {$errfile}, {$errline}", PHP_EOL;
+    echo "verson ", PHP_VERSION, " (", PHP_OS , ")", PHP_EOL;
+}
+set_error_handler("customError", E_ALL|E_STRICT);</code></pre>
+<p>php error这样的错误虽然捕获不到，也无法在发送此错误后恢复流程处理，但是可以使用一些特殊方法
+对这种错误进行处理。使用register_shutdown_function，此函数会在PHP程序终止或者die时触发</p>
+<pre><code class="language-php" data-comment="">class Shutdown {
+    public function stop() {
+        if(error_get_last()) {
+            print_r(error_get_last());
+        }
+        die('Stop');
+    }
+}
+register_shutdown_function(array(new Shutdown(), 'stop'));</code></pre>
+<h2>1.7 本章小结</h2>
+<h6>2018.02.24</h6></div>
+<script >
+    requirejs(['../../js/conf/r'], function(rc) {
+        requirejs(['../js/html']);
+    });
+</script>
+</body>
+</html>

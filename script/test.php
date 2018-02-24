@@ -1,7 +1,6 @@
 <?php
 
-$img = glob("../data/img/hzw.*jpg");
 
-foreach ($img as $v) {
-    echo "![.m23](../img/".basename($v).")", PHP_EOL;
-}
+
+$html = file_get_contents("../test.html");
+
