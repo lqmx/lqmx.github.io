@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="update_time" content="1519742209">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PHP核心技术与最佳实践 第九章 Memcached使用与实践</title>
+    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1519742209">
+    <link rel="stylesheet" href="../../css/reset.css?v1519742209">
+    <link rel="stylesheet" href="../../css/md.css?v1519742209">
+    <link rel="stylesheet" href="../../css/module.css?v1519742209">
+    <link rel="stylesheet" href="../../css/c.css?v1519742209">
+    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1519742209">
+    <script src="../../dep/require.js?1519742209"></script>
+</head>
+<body>
+    <div class="md"><h1>第九章 Memcached使用与实践</h1>
+<h6>2018.02.26</h6>
+<h2>9.1 为什么要用Memcached</h2>
+<p>传统的关系型数据库，很多方面不能满足我们的要求：</p>
+<ol>
+<li>对数据库的高并发读写</li>
+<li>对海量数据的处理</li>
+</ol>
+<h2>9.2 Memcached的安装及使用</h2>
+<p>Memcached是高性能的分布式内存缓存服务器，通过缓存数据库查询结果，减少数据库
+访问次数，以提高动态web应用的速度和可扩展性。</p>
+<p>Memcached特点：</p>
+<ol>
+<li>协议简单</li>
+<li>基于libevent的事件处理</li>
+<li>内置内存存储方式</li>
+<li>采用不相互通信的分布式</li>
+</ol>
+<h3>9.2.1 安装Memcached服务器</h3>
+<pre><code class="language-bash" data-comment=""># 安装libevent
+wget https:://github.com/downloads/libevent/libevent/libevent-2.0.15-stable.tar.gz
+tar -zxvf libevent-2.0.15-stable.tar.gz
+cd libevent-2.0.15-stable
+./configure --prefix=/usr/local
+make &amp;&amp; make install
+
+# 安装Memcached
+wget http://memcached.googlecode.com/files/memcached-1.4.9.tar.gz
+tar -zxvf memcached-1.4.9.tar.gz
+cd memchached-1.4.9
+./configure --prefix=/usr/local/memcached
+make &amp;&amp; make install
+
+# 启动Memcached
+/usr/local/memcached/bin/memcached -d -m 128 -u root -p 11211</code></pre>
+<h3>9.2.2 安装Memcached客户端</h3>
+<pre><code class="language-bash" data-comment=""># 安装PHP的Memcached扩展
+wget http://pecl.php.net/get/memcache-2.2.5.tgr
+tar -zxvf memcache-2.2.5.tar
+cd memcache-2.2.5
+phpize
+./configure --enable-memcache --with-php-config=/usr/local/php/bin/php-config --with-zlib-dir
+make &amp;&amp; make install
+
+# 添加配置php.ini
+extension-/usr/local/php/lib/php/extension/no-debug-no-zts-20120625/memcache.so
+
+# 重启服务器</code></pre>
+<p>测试</p>
+<pre><code class="language-php" data-comment="">$mc = new Memcache();
+$mc-&gt;connect('127.0.0.1', 11211);
+$mc-&gt;set('key', 'value', 0, 10);
+$val = $mc-&gt;get('key');
+$mc-&gt;delete('key');
+$mc-&gt;flush();
+$mc-&gt;close();</code></pre>
+<h3>使用Memcached扩展访问Memcached服务器</h3>
+<pre><code class="language-txt" data-comment="">1. bool Memcache: connect(string $host[, int $port[, int $timeout]]);
+2. bool Memcache: addServer(string $host[, int $port[, bool $persistent[, int $weight[, int $timeout[, int $retry_interval[, bool $status[, callback $failure_callback]]]]]]]);
+3. bool Memcache: add(string $key, mixed $var[, int $flag, int $expire]]);
+4. bool Memcache: replace(string $key, mixed $var[, int $flag[, int $expire]]);
+5. bool Memcache: set(string $key, mixed $var[, int $flag[, int $expire]]);
+6. string Memcache: get(string $key[, int&amp; $flags]);
+   array Memcache: get(array $keys[, array&amp; $flags]);
+7. bool Memcache: delete(string $key[, int $timeout]);
+8. bool Memcache: flush(void);
+9. int Memcache: getServerStatus(string $host[, int $port]);
+10. array Memcache: getStats([string $type[, int $slabid, int $limit=100]]]);
+11. bool Memcache: close(void);</code></pre>
+<h3>9.2.4 使用Memcached加速web应用</h3>
+<pre><code class="language-php" data-comment="">$mc = new Memcache();
+$mc-&gt;connect('127.0.0.1', 11211);
+$uid = (int)$_GET['uid'];
+$sql = "SELECT * FROM users WHERE uid = '$uid'";
+$key = md5($sql);
+if(!($datas=$mc-&gt;get($key))) {
+    $conn = mysql_connect('localhost', 'test', 'test');
+    mysql_select_db('test');
+    $result = mysql_query($sql);
+    while($row=mysql_fetch_object($result)) {
+        $data[] = $row;
+    }
+    $mc0&gt;add($key, $datas);
+}
+var_dump($datas);</code></pre>
+<h2>9.3 深入了解Memcached</h2>
+<h3>9.3.1 Memcached如何支持高并发</h3>
+<ol>
+<li>Memcached使用多路复用I/O模型，多路复用I/O是一种消息通知模型，用户连接做好I/O准备后，
+系统会通知我们这个可以进行I/O操作，这样就不会阻塞在某个用户连接。</li>
+<li>Memcached使用了多线程模型。</li>
+</ol>
+<h3>9.3.2 使用Slab分配算法保存数据</h3>
+<p>Memcached默认只能存储不大于1MB的数据。因为Memcached在存储数据时采用了Slab内存分配算法。
+这个算法可以减少生成内存碎片，提高内存使用效率等。</p>
+<p>Slab分配算法的原理是，把固定大小（1MB）的内存块划分成n小块。Slab分配算法把每1MB大小的内存块称为
+一个slab页，每次向系统申请一个slab页，然后通过分割算法把这个slab页分割成若干小块的chunk，再吧这些
+chunk分配给用户。</p>
+<h3>9.3.3 删除过期的item</h3>
+<p>延迟删除过期item到查找时进行，可以提高Memcached效率。这样不必每时每刻检测过期item，从而提高CPU
+工作效率。</p>
+<h3>9.3.4 使用LRU算法淘汰数据</h3>
+<p>淘汰规则：从数据项列表尾部开始遍历，在列表中查找一个引用计数器为0的item，把此item释放掉。
+从尾部遍历的原因是Memcached会吧刚刚访问过的item放在item列表头部，所以尾部的item都是没有被
+访问过的（或者很少被访问）。</p>
+<h3>9.3.5 Memcached多线程模型</h3>
+<p>主线程：手机客户端连接，并把连接分配给工作线程处理
+工作线程：处理客户端连接的请求</p>
+<ol>
+<li>当有客户端连接Memcached时，主线程调用<code class="inline-code">accept</code>接收客户端连接，</li>
+<li>调用`dispatch_conn_new函数把链接交给
+工作线程处理</li>
+<li><code class="inline-code">dispatch_con_new</code>主要工作：选择一个工作线程，把客户端连接push到
+此工作线程的CQ队列中，发送一个信号通知工作线程有新的客户端链接需要处理。</li>
+<li>工作线程接收到主线程发送来的信号时，调用<code class="inline-code">thread_libevent_process</code>处理</li>
+<li><code class="inline-code">thread_libevent_process</code>函数主要工作：从管道读取一个字节的数据，然后从
+CQ队列中取得一个连接，调用<code class="inline-code">conn_new</code>函数把此链接注册到libevent中进行监听</li>
+<li>当客户端链接可读或者可写时，Memcached调用<code class="inline-code">drive_machine</code>函数进行处理</li>
+</ol>
+<h2>9.4 Memcached分布式布置方案</h2>
+<p>当布置多台Memcached服务器，怎么确定一个数据应该保持到哪台服务器上面呢？</p>
+<p>方案：</p>
+<ol>
+<li>普通hash分布</li>
+<li>一致性hash分布</li>
+</ol>
+<h3>9.4.1 不同hash分布</h3>
+<p>首先通过md5把key处理成一个32字符串，取其前8字符。再经过hash算法处理成
+一个整数并返回，然后映射到其中一台Memcached服务器</p>
+<h3>9.4.2 一致性hash分布</h3>
+<p>一致性hash分布算法分为6个步骤：</p>
+<ol>
+<li>把一个32位整数想象成一个环</li>
+<li>通过hash函数吧key处理成整数</li>
+<li>把Memcached群映射到环上，使用hash函数处理服务器所使用的ip地址</li>
+<li>把数据映射到服务器上</li>
+<li>移除服务器</li>
+<li>添加服务器</li>
+</ol>
+<h3>9.4.3 一致性hash分布算法实例</h3>
+<pre><code class="language-php" data-comment="">class FlexHash {
+    private $serverList = array(); // 服务器列表
+    private $isSorted = false; // 记录服务器是否排过序
+    function addServer($server) {
+        $hash = mHash($server);
+        if(!isset($this-&gt;serverList[$hash])) {
+            $this-&gt;serverList[$hash] = $server;
+        }
+        $this-&gt;isSorted = false;
+        return true;
+    }
+    function removeServer($server) {
+        $hash = mHash($server);
+        if(isset($this-&gt;serverList[$hash])) {
+            unset($this-&gt;serverList[$hash]);
+        }
+        $this-&gt;isSorted = false;
+        return true;
+    }
+    function lookup($key) {
+        $hash = mHash($key);
+        if(!$this-&gt;isSorted) {
+            krsort($this-&gt;serverList, SORT_NUMERIC);
+        }
+        $this-&gt;isSorted = true;
+        foreach($this-&gt;serverList as $pos =&gt; $server) {
+            if($hash &gt;= $pos) return $server;
+        }
+        return $this-&gt;serverList[count($this-&gt;serverList) -1];
+    }
+}</code></pre>
+<h6>2018.02.27</h6></div>
+<script >
+    requirejs(['../../js/conf/r'], function(rc) {
+        requirejs(['../js/html']);
+    });
+</script>
+</body>
+</html>

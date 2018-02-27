@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="update_time" content="1519742209">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PHP核心技术与最佳实践 第六章 PHP模板引擎的原理与实践</title>
+    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1519742209">
+    <link rel="stylesheet" href="../../css/reset.css?v1519742209">
+    <link rel="stylesheet" href="../../css/md.css?v1519742209">
+    <link rel="stylesheet" href="../../css/module.css?v1519742209">
+    <link rel="stylesheet" href="../../css/c.css?v1519742209">
+    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1519742209">
+    <script src="../../dep/require.js?1519742209"></script>
+</head>
+<body>
+    <div class="md"><h1>第六章 PHP模板引擎的原理与实践</h1>
+<h6>2018.02.26</h6>
+<p>模板引擎作为视图层和模型层分离的一种解决方案，让前后端更好地分工协作</p>
+<h2>6.1 代码分层的思想</h2>
+<h2>6.2 实现一个简单的模板引擎骨架</h2>
+<h3>6.2.1 搭建模板引擎基础类骨架</h3>
+<pre><code class="language-php" data-comment="">class Template {
+    private $arrConfig = array(
+        'suffix' =&gt; '.m',
+        'template_ir' =&gt; 'template/',
+        'compile_dir' =&gt; 'cache/',
+        'cache_htm' =&gt; false,
+        'suffix_cache' =&gt; '.htm',
+        'cache_time' =&gt; 7200,
+    );
+    public $file;
+    private $compileTool;
+    private $value = array();
+    static private $instance = null;
+    public function __construct($arrConfig = array())
+    {
+        $this-&gt;arrConfig = $arrConfig + $this-&gt;arrConfig;
+        include('CompileClass.php');
+        $this-&gt;compileTool = new CompileClass();
+    }
+    public static function getInstance() {
+        if(is_null(self::$instance)) {
+            self::$instance = new Template();
+        }
+        return self::$instance;
+    }
+    public function setConfig($key, $value=null) {
+        if(is_array($key)) {
+            $this-&gt;arrConfig = $key + $this-&gt;arrConfig;
+        }
+        else {
+            $this-&gt;arrConfig[$key] = $value;
+        }
+    }
+    public function getConfig($key = null) {
+        if($key) {
+            return $this-&gt;arrConfig[$key];
+        }else {
+            return $this-&gt;arrConfig;
+        }
+    }
+    public function assign($key, $value) {
+        $this-&gt;value[$key] = $value;
+    }
+    public function assignArray($array) {
+        if(is_array($array)) {
+            foreach ($array as $k=&gt; $v) {
+                $this-&gt;value[$k] = $v;
+            }
+        }
+    }
+    public function show($file) {
+        $this-&gt;file = $file;
+        if(!is_file($this-&gt;path())) {
+            exit('cannot find template file');
+        }
+        $compileFile = $this-&gt;arrConfig['compile_dir'] . '/'.md5($file).'.php';
+        var_dump($compileFile);
+        var_dump($this-&gt;path());
+        if(!is_file($compileFile)) {
+            mkdir($this-&gt;arrConfig['compile_dir']);
+            $this-&gt;compileTool-&gt;compile($this-&gt;path(), $compileFile);
+        }else {
+            readfile($compileFile);
+        }
+    }
+    public function path() {
+        return $this-&gt;arrConfig['template_ir'].$this-&gt;file.$this-&gt;arrConfig['suffix'];
+    }
+}</code></pre>
+<h3>6.2.2 编译类骨架</h3>
+<pre><code class="language-php" data-comment="">class CompileClass {
+    private $template;
+    private $content;
+    private $comfile;
+    private $left = '{';
+    private $right = '}';
+    private $value = array();
+    public function  __construct()
+    {
+    }
+    public function compile($source, $destFile) {
+        file_put_contents($destFile, file_get_contents($source));
+    }
+}</code></pre>
+<p>模板引擎的基本开发思路</p>
+<ol>
+<li>模板引擎要做的事情就是吧逻辑层和表现层的代码分离</li>
+<li>作为一个工具类，要可配置</li>
+<li>确定模板引擎到底需要一些什么功能，需要哪些特性</li>
+</ol>
+<h2>6.3 模板引擎的编译</h2>
+<h3>6.3.1 实现变量标签</h3>
+<pre><code class="language-php" data-comment="">    public function c_var() {
+        $pattern = '#\{\\$([a-zA-Z_\x7f-\xff\][a-zA-Z0-9_\x7f-\xff]*)\}#';
+        if(strpos($this-&gt;content, '{$') !== false) {
+            $this-&gt;content=preg_replace($pattern, "&lt;?php echo \$this-&gt;value['\\1'];?&gt;", $this-&gt;content);
+        }
+    }</code></pre>
+<h3>6.3.2 实现foreach标签</h3>
+<pre><code class="language-php" data-comment="">    public function c_foreach() {
+        $patten1 = '#\{(loop|foreach)\ \$(.*?))#';
+        $patten2 = '#\{\/(loop|foreach)}#';
+        $patten3 = '#\ {(K|V])\}#';
+        $this-&gt;content = preg_replace($patten1, "&lt;?php foreach((array)\ \2 as \$K=&gt;\$V){ ?&gt;", $this-&gt;content);
+        $this-&gt;content = preg_replace($patten2, "&lt;?php } ?&gt;", $this-&gt;content);
+        $this-&gt;content = preg_replace($patten3, "&lt;?php echo \$ \1; ?&gt;", $this-&gt;content);
+    }</code></pre>
+<h3>6.3.3 实现if...else标签</h3>
+<h3>6.3.4 对PHP原生语法的支持</h3>
+<h2>6.4 完善模板引擎</h2>
+<h3>6.4.1 模板缓存机制的实现</h3>
+<h3>6.4.2 调试和缓存清理</h3>
+<h3>6.4.3 如何使用模板</h3>
+<h2>6.5 常用的模板引擎</h2>
+<h3>6.5.1 Discuz模板引擎</h3>
+<h3>6.5.2 Smarty模板引擎</h3>
+<h3>6.5.3 DedeCms模板引擎</h3>
+<h3>6.5.4 Blitz模板引擎</h3>
+<h3>6.5.5 模板引擎的一些思考</h3>
+<h2>6.6 本章小结</h2>
+<h6>2018.02.27</h6></div>
+<script >
+    requirejs(['../../js/conf/r'], function(rc) {
+        requirejs(['../js/html']);
+    });
+</script>
+</body>
+</html>

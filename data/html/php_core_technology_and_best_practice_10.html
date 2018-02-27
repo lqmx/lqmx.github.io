@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="update_time" content="1519742107">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PHP核心技术与最佳实践 第十章 Redis使用与实践</title>
+    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1519742107">
+    <link rel="stylesheet" href="../../css/reset.css?v1519742107">
+    <link rel="stylesheet" href="../../css/md.css?v1519742107">
+    <link rel="stylesheet" href="../../css/module.css?v1519742107">
+    <link rel="stylesheet" href="../../css/c.css?v1519742107">
+    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1519742107">
+    <script src="../../dep/require.js?1519742107"></script>
+</head>
+<body>
+    <div class="md"><h1>第十章 Redis使用与实践</h1>
+<h6>2018.02.27</h6>
+<h2>10.1 Redis的安装及使用</h2>
+<p>redis把整个数据库全加载到内存中进行操作，通过异步操作把数据库数据flush到硬盘上保存</p>
+<p>redis有点</p>
+<ol>
+<li>支持丰富的数据类型</li>
+<li>支持两种数据持久化方式：snapshotting（快照）和append only file（追加）</li>
+<li>支持主从复制</li>
+</ol>
+<h3>10.1.1 redis安装步骤</h3>
+<pre><code class="language-bash" data-comment="">wget http://redis.googlecode.com/filse/redis-2.2.10.tar.gz
+tar zvxf redis-2.2.10.tar.gz
+cd redis-2.2.10
+make
+cp redis.conf /etc/
+cp reids-benchmark redis-cli redis-server /usr/bin/</code></pre>
+<h3>10.1.2 修改redis配置文件</h3>
+<h3>10.1.3 运行redis服务器</h3>
+<pre><code class="language-bash" data-comment="">/user/bin/redis-server /etc/redis.conf
+ps -x | grep redis</code></pre>
+<h3>10.1.4 key相关操作</h3>
+<h3>10.1.5 redis支持的数据类型</h3>
+<ol>
+<li>String 二进制安全</li>
+<li>List 双向链表</li>
+<li>Set </li>
+<li>Sorted Set </li>
+<li>Hash</li>
+</ol>
+<h3>10.1.6 redis排序命令详解</h3>
+<pre><code class="language-txt" data-comment="">sort key[by pattern][limit start count][get pattern][asc|desc][alpha][store dstkey]</code></pre>
+<h2>10.2 事务处理</h2>
+<p>redis只能保证一个客户端连接发起十五中的命令可以连续执行，而中间不会插入其他客户端连接的命令</p>
+<h3>10.2.1 事务处理原理</h3>
+<p>redis在执行<code class="inline-code">multi</code>后把一个连接发来的命令保存在一个队列中。当执行<code class="inline-code">exec</code>时，redis便
+开始顺序执行队列中的所有命令，并将所有命令之执行的结果打包一起返回客户端连接。</p>
+<p>redis只能保证事务的每个命令能够连续执行，但是事务中有命令执行失败，redis不进行回滚操作。</p>
+<h3>10.2.2 事务处理实现</h3>
+<h2>10.3 持久化</h2>
+<p>redis提供了两种持久化方式：<code class="inline-code">内存快照（Snapshotting）</code>和<code class="inline-code">日志追加（append only file)</code></p>
+<h3>10.3.1 内存快照</h3>
+<p>redis每隔一段时间进行一次内存快照操作，客户端使用save或者bgsave命令告诉redis需要做一次
+内存快照操作。save命令在主线程保存内存快照。</p>
+<h3>10.3.2 日志追加</h3>
+<p>日志追加是把增加、修改数据的命令通过write函数追加到文件尾部，redis重启时读取appendonly.aof
+文件中的所有命令并且执行，从而把数据写入内存中。</p>
+<p>为了压缩日志文件，redis提过bgrewriteaof命令。当redis收到此命令，就使用类似于内存快照方式
+将内存的数据以命令的方式保存到临时文件中，最后替换原来的日志文件</p>
+<h2>10.4 主从同步</h2>
+<p>主从同步可以防止主机坏掉导致网站不能正常运行。</p>
+<p>redis主从同步的有点如下:</p>
+<ol>
+<li>master可以有多个slave</li>
+<li>多个slave连接到相同的master,slave还可以连接其他slave</li>
+<li>不会阻塞master</li>
+<li>主从同步用来提高系统的伸缩性</li>
+<li>在master服务器禁止数据持久化,只在slave服务器上进行数据持久化</li>
+</ol>
+<h3>10.4.1 redis主从同步原理</h3>
+<p>redis主从同步过程分两个阶段,第一个阶段如下</p>
+<ol>
+<li>slave连接到master</li>
+<li>slave发送sycn命令给master</li>
+<li>master备份rdb文件</li>
+<li>master传输rdb文件给slave</li>
+<li>slave服务器清空数据库数据,slave导入rdb文件数据到数据库</li>
+</ol>
+<p>第二阶段,master服务器把用户所有更改数据的操作,通过命令的形式转发给所有slave服务器,slave
+服务器只需执行master服务器发送过来的命令就可以达到同步的效果。</p>
+<h3>10.4.2 slave端的工作流程</h3>
+<h3>10.4.4 master端的工作流程</h3>
+<h2>10.5 虚拟内存</h2>
+<p>当出现物理内存不足时,redis使用虚拟内存来保存数据</p>
+<p>由于操作系统的vm是基于页的概念,而redis大多数对象小于页的大小,一页上可能有多个redis对象,
+所以redis自己实现可达到控制换入的粒度。</p>
+<p>redis将交换到磁盘的对象压缩。</p>
+<p>redis的vm只把value交换到磁盘中,而key依然保存在内存中,目的是让开启vm的redis和完全
+使用内存的redis性能基本保持一致</p>
+<h3>10.5.1 配置文件信息</h3>
+<pre><code class="language-ini" data-comment=""># 开启VM功能
+vm-enable yes
+# 交换出来的value保存的文件路径
+vm-swap-file /tmp/redis.swap
+# redis使用的最大内存上限
+vm-max-memory 268435456
+# 设置每个页面大小
+vm-page-size 32
+# 最多在文件中使用多少也慢慢
+vm-page 134517728
+# 用户执行value兑现换入换出的工作线程数量
+vm-max-threads 4</code></pre>
+<h3>10.5.2 开启vm的后台操作</h3>
+<p>为了避免两个进程访问同一个swap文件,当有后台子进程做快照保存时,父进程不允许把内存中的对象
+交换到swap文件</p>
+<h3>10.5.3 redis object和vm pointer</h3>
+<p>当一个value交换到磁盘时,value对应的redis object将被替换成vm pointer,vm pointer
+保存value在磁盘的信息</p>
+<h3>10.5.4 交换过程</h3>
+<ol>
+<li>交换对象至swap文件</li>
+</ol>
+<p>在单线程vm环境下,分为3个步骤
+1) 计算保存这个兑现需要占用swap文件中的多少页
+2) 在swap文件中寻找一段连续页空间保存这个对象
+3) 把对象写入swap文件</p>
+<ol start="2">
+<li>从swap文件中加载对象</li>
+</ol>
+<h3>10.5.5 阻塞式vm</h3>
+<h3>10.5.6 非阻塞式vm</h3>
+<h2>10.6 扩展库phpredis安装及使用</h2>
+<pre><code class="language-bash" data-comment="">wget http://github.com/owlient/phpredis/downloads/phpredis.tar.gz
+tar xzvf phpredis.tar.gz
+cd phpredis
+/user/local/php/bin/phpize
+./configure --with-php-config=/usr/local/php/bin/php-config
+make &amp;&amp; make install
+vim php.ini
+extension=redis.so</code></pre>
+<pre><code class="language-php" data-comment="">$redis = new Reids();
+$redis-&gt;connect('127.0.0.1', 6379);
+$redis-&gt;set('key', 'value');
+$value = $redis-&gt;get('key');
+$redis-&gt;close();</code></pre>
+<h2>10.7 redis应用实践</h2>
+<h3>10.7.1 使用消息队列发布微博</h3>
+<h3>10.7.2 redis替换文件存储session</h3>
+<h2>10.8 深入了解redis内核</h2>
+<h3>10.8.1 内存淘汰</h3>
+<p>当内存不足时,redis有两种处理方式</p>
+<ol>
+<li>启用虚拟内存</li>
+<li>启用内存淘汰</li>
+</ol>
+<p>redis淘汰算法</p>
+<ol>
+<li>随机淘汰算法</li>
+<li>lru淘汰算法(最近最少使用)</li>
+<li>ttl淘汰算法(最快过期)</li>
+</ol>
+<h3>10.8.2 对象引用计数器</h3>
+<p>给对象添加一个引用计数器,每当有地方引用它时,计数器加一,引用失效时,计数器减一,当计数器为0
+时,redis删除该对象</p>
+<h3>10.8.3 自动关闭超时连接</h3>
+<h3>10.8.4 清除过期数据</h3>
+<h2>10.9 本章小结</h2>
+<h6>2018.02.27</h6></div>
+<script >
+    requirejs(['../../js/conf/r'], function(rc) {
+        requirejs(['../js/html']);
+    });
+</script>
+</body>
+</html>
