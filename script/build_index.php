@@ -49,7 +49,7 @@ foreach ($files as $file) {
     $bg = 'bg-' . (isset($types[$type])?$types[$type]:0);
     $img = glob($config['img_dir']."$url*");
     $imgDiv = "";
-    if(!empty($img)) {
+    if(!empty($img) and count(explode('.', basename($img[0])))==2) {
         $imgDiv = '<img src="data/img/' . basename($img[0]) . '" draggable="false">';
     }
     $papers .= sprintf($paperDiv, $type, $url, $bg, $imgDiv, $title, date("d M Y", strtotime($date)));
