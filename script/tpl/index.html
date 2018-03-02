@@ -11,19 +11,20 @@
     <link rel="stylesheet" href="css/style.css?v$v">
     <link rel="stylesheet" href="css/iconfont/iconfont.css?v$v">
     <link rel="stylesheet" href="css/c.css?v$v">
-    <!--<script src="dep/require.js?$v"></script>-->
+    <link rel="stylesheet" href="css/module.css?v$v">
+    <script src="dep/require.js?$v"></script>
 </head>
 <body>
 <div class="table">
     %s
 </div>
-<script src="dep/jquery.js?v$v"></script>
-<script src="module/drag/Drag.o.js?v$v"></script>
-<script src="js/index.js?v$v"></script>
-<!--<script >-->
-    <!--requirejs(['js/conf/r'], function(rc) {-->
-        <!--requirejs(['../js/index']);-->
-    <!--});-->
-<!--</script>-->
+<!--<script src="dep/jquery.js?v$v"></script>-->
+<!--<script src="module/drag/Drag.o.js?v$v"></script>-->
+<!--<script src="js/index.js?v$v"></script>-->
+<script >
+    requirejs(['js/conf/r'], function(rc) {
+        requirejs(['../js/index']);
+    });
+</script>
 </body>
 </html>

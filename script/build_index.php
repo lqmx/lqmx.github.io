@@ -2,18 +2,6 @@
 
 $config = parse_ini_file("./config.ini");
 
-$types = array(
-    'web' => 1,
-    'it' => 2,
-    'memo' => 3,
-    'algorithm' => 4,
-    'php' => 5,
-    'js' => 6,
-    'literature' => 7,
-    'mysql' => 'mysql',
-    'snippet' => 'snippet',
-);
-
 
 $v = time();
 $base = file_get_contents("tpl/index.html");
@@ -28,6 +16,7 @@ $readme = "README";
 $files[] = $readme.".md";
 $notes = [];
 $notes = file_get_contents("./notes.json");
+$types = array();
 if(!empty($notes)) {
     $notes = json_decode($notes, true);
 } else {
@@ -46,7 +35,8 @@ foreach ($files as $file) {
         if($type == 'ing')
             continue;
     }
-    $bg = 'bg-' . (isset($types[$type])?$types[$type]:0);
+    if(!in_array($type, $types)) $types[] = $type;
+    $bg = 'bg-' . $type;
     $img = glob($config['img_dir']."$url*");
     $imgDiv = "";
     if(!empty($img) and count(explode('.', basename($img[0])))==2) {
@@ -78,3 +68,13 @@ NOTEDATA;
 
 file_put_contents("../js/notes.js", sprintf($notesData, json_encode($notes)));
 file_put_contents("./notes.json", json_encode($notes));
+
+//$c = <<<COLOR
+//.bg-%s {
+//    background: #FC3A52;
+//}
+//COLOR;
+//
+//foreach ($types as $v) {
+//    echo sprintf($c, $v), PHP_EOL;
+//}

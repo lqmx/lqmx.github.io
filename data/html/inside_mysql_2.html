@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="update_time" content="1520001716">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MySQL技术内幕 第二章 InnoDB存储引擎</title>
+    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1520001716">
+    <link rel="stylesheet" href="../../css/reset.css?v1520001716">
+    <link rel="stylesheet" href="../../css/md.css?v1520001716">
+    <link rel="stylesheet" href="../../css/module.css?v1520001716">
+    <link rel="stylesheet" href="../../css/c.css?v1520001716">
+    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1520001716">
+    <script src="../../dep/require.js?1520001716"></script>
+</head>
+<body>
+    <div class="md"><h1>第二章 InnoDB存储引擎</h1>
+<h6>2018.03.01</h6>
+<h2>2.1 InnoDB存储引擎概述</h2>
+<p>InnoDB是第一个完整支持ACID事务的MySQL存储引擎,其特点是行锁设计、支持MVCC、支持外键、
+提供一致性非锁定读,同时被设计用来最有效地利用以及使用内存和CPU。</p>
+<h2>2.2 InnoDB存储引擎的版本</h2>
+<h2>2.3 InnoDB体系架构</h2>
+<p>InnoDB有多个内存块,负责:</p>
+<ol>
+<li>维护所有进程/线程需要访问的多个内部数据结构</li>
+<li>缓存磁盘上的数据,方便快速地读取,同时在对磁盘文件的数据修改之前在这里缓存</li>
+<li>重做日志缓冲</li>
+</ol>
+<p>后台线程的作用:</p>
+<ol>
+<li>刷新内存池中的数据,保证缓冲池中的内存缓存的是最近的数据</li>
+<li>将已修改的数据文件刷新到磁盘文件</li>
+<li>保证在数据库发生异常的情况下InnoDB能恢复到正常运行状态</li>
+</ol>
+<h3>2.3.1 后台线程</h3>
+<ol>
+<li>Master Thread</li>
+</ol>
+<p>将缓冲池中的数据异步刷新到磁盘,保证数据的一致性,包括脏页的刷新、合并插入缓冲、undo页的回收等。</p>
+<ol start="2">
+<li>IO Thread</li>
+</ol>
+<p>InnoDB有write、read、insert buffer和log IO thread</p>
+<pre><code class="language-mysql" data-comment="">show variables like 'innodb_version';
+show variables like 'innodb_%io_threads';
+show engin innodb status;</code></pre>
+<ol start="3">
+<li>Purge Thread</li>
+</ol>
+<p>事务被提交后,其所使用的undo log可能不在需要,Purge Thread负责回收已经使用并分配的undo页</p>
+<pre><code class="language-ini" data-comment="">[mysqld]
+innodb_purge_threads=1</code></pre>
+<pre><code class="language-mysql" data-comment="">show variables like 'innodb_purge_threads';</code></pre>
+<ol start="4">
+<li>Page Cleaner Thread</li>
+</ol>
+<p>其作用是将之前版本中的脏页的刷新操作都放入到单独的线程中来完成,减轻原Master Thread的工作
+及对于用户查询线程的阻塞,提高InnoDB的性能</p>
+<h3>2.3.2 内存</h3>
+<ol>
+<li>缓冲池</li>
+</ol>
+<p>缓冲池简单来说就是一块内存区域,通过内存的速度来弥补磁盘速度较慢对数据库性能的影响。</p>
+<pre><code class="language-mysql" data-comment="">show variables like 'innodb_buffer_pool_size';</code></pre>
+<p>缓冲池中缓存的数据页类型有:索引页、数据页、undo页、插入缓冲、自适应哈希索引、InnoDB的锁信息、
+数据字典信息等。</p>
+<pre><code class="language-mysql" data-comment="">show variables like 'innodb_buffer_pool_instance';
+show engin innodb status;
+select pool_id, pool_size, free_buffers, database_paces from innodb_buffer_pool_status;</code></pre>
+<ol start="2">
+<li>LRU List、Free List和Flush List</li>
+</ol>
+<p>数据库中的缓冲池通过LRU(最近最少使用)算法来管理。</p>
+<p>缓存池中页的大小默认为16KB</p>
+<p>InnoDB对传统的LRU算法做了一些优化,引入midpoint,算法为midpoint insertion strategy</p>
+<pre><code class="language-mysql" data-comment="">show variables like 'innodb_old_blocks_pct';</code></pre>
+<pre><code class="language-mysql" data-comment="">sel global innodb_old_blocks_time=1000;
+set global innodb_old_blocks_time=0;
+set global innodb_old_blocks_pct=20;</code></pre>
+<pre><code class="language-mysql" data-comment=""># 缓冲池的状态
+select pool_id, hit_hate, pages_made_young, page_not_made_young from 
+information_schema.innodb_buffer_pool_status;
+# LRU列表中SPACE为1的表的页类型
+select table_name, space, page_number, page_type from innodb_buffer_page_lru
+where space = 1;</code></pre>
+<p>需要从缓冲池中申请页为4KB的大小,过程为:</p>
+<ul>
+<li>检查4KB的unzip_LRU列表,检查是否有可用的空闲页</li>
+<li>若有,则直接使用</li>
+<li>否则,检查8KB的unzip_LRU列表</li>
+<li>若能得到空闲页,将页分为两个4KB的页,存放到4KB的unzip_LRU列表</li>
+<li>若不能得到空闲页,从LRU列表申请一个16KB的页,风味一个8KB两个4KB的页,分别放入对应的unzip_LRU中</li>
+</ul>
+<pre><code class="language-mysql" data-comment=""># 查看unzip_LRU页
+select table_name, space, page_number, compressed_size from innodb_buffer_page_lru
+where compressed_size &lt;&gt;0;</code></pre>
+<pre><code class="language-mysql" data-comment=""># 查看脏页的情况
+select table_name, spacee, page_number, page_type from innodb_buffer_page_lru
+where oldest_modification &gt; 0;</code></pre>
+<p>LRU List用来管理已经读取的页
+Free List用来管理空闲页
+Flush List用来管理脏页(在LRU列表中被修改的页)</p>
+<ol start="3">
+<li>重做日志缓冲</li>
+</ol>
+<pre><code class="language-mysql" data-comment="">show variables like 'innodb_log_buffer_size';</code></pre>
+<p>重做日志在下列情况会将日志缓冲中的内存刷新到外部磁盘的重做日志文件中:</p>
+<ul>
+<li>Master Thread每一秒执行</li>
+<li>每个事务提交时</li>
+<li>当重做日志缓冲池剩余空间小于1/2时</li>
+</ul>
+<ol start="4">
+<li>额外的内存池</li>
+</ol>
+<p>在对一些数据结构本身的内存进行分配时,需要从额外的内存池中申请,当该区域的内存不够时,会从
+缓冲池中申请。</p>
+<h3>2.4 Checkpoint技术</h3>
+<h6>2018.03.02</h6></div>
+<script >
+    requirejs(['../../js/conf/r'], function(rc) {
+        requirejs(['../js/html']);
+    });
+</script>
+</body>
+</html>

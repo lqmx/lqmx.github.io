@@ -1,39 +1,44 @@
-.bg-0 {
-    background-color: #FFED78;
+.bg-web {
+    background: #FC3A52;
 }
-
-.bg-1 {
-    background-color: #BAB5F6;
+.bg-it {
+    background: #132d5a;
 }
-
-.bg-2 {
-    background-color: #6A65D8;
+.bg-memo {
+    background: #A8A8A8;
 }
-
-.bg-3 {
-    background-color: #00B7C2;
+.bg-algorithm {
+    background: #090504;
 }
-
-.bg-4 {
-    background-color: #FF894C;
+.bg-php {
+    background: #6c7fb5;
 }
-
-.bg-5 {
-    background-color: #C5F0A4;
+.bg-js {
+    background: #31b5ed;
 }
-
-.bg-6 {
-    background-color: #364857;
+.bg-literature {
+    background: #C5F0A4;
 }
-
-.bg-7 {
-    background-color: #FB5660;
-}
-
 .bg-mysql {
     background: #4479a1;
 }
-
 .bg-snippet {
-    background: #FC3A52;
+    background: #364857;
 }
+.bg-comic {
+    background: #FF894C;
+}
+.bg-cheatsheet {
+    background: #00B7C2;
+}
+.bg-network {
+    background: #BAB5F6;
+}
+.bg-interview {
+    background: #6A65D8;
+}
+.bg-intro {
+    background: #FFED78;
+}
+
+
