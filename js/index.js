@@ -61,17 +61,25 @@ define(function (require) {
         });
         SearchBar.init();
         SearchBar.bindInputEvt(function (obj, e) {
-            var searchText = $(obj).val();
+            var searchText = $(obj).val().toLocaleLowerCase();
+            var show = 0;
             $paper.each(function (k, v) {
-                 var type = $(v).attr('data-type');
-                 var title = $(v).find('.title').text();
+                 var type = $(v).attr('data-type').toLocaleLowerCase();
+                 var title = $(v).find('.title').text().toLocaleLowerCase();
                  if((type.indexOf(searchText) === -1
                  && title.indexOf(searchText) === -1) || hideType.toString().indexOf(type) > -1) {
                      $(v).hide();
                  } else {
                      $(v).show();
+                     show ++;
                  }
             });
+            if(e.key === 'Enter') {
+                if(show === 1) {
+                    var url = $('.paper:visible').attr('data-url');
+                    window.location.href = window.location.origin + htmlDir + url;
+                }
+            }
         });
         KeyBoard.bind('Ctrl-Shift-F', function () {
            SearchBar.show();
