@@ -1,6 +1,8 @@
-// define(function (require) {
-//     var $ = require('jquery'),
-//         Drag = require('../../module/drag/Drag');
+define(function (require) {
+    var $ = require('jquery'),
+        KeyBoard = require('../js/comm/keyevent'),
+        Drag = require('../../module/drag/Drag'),
+        SearchBar = require('../../module/searchbar/SearchBar');
     $(function () {
         var htmlDir = "/data/html/";
         var winHeight = $(document).height(),
@@ -63,6 +65,29 @@
                 window.location.href = url;
             });
             Drag.bind($(v));
-        })
+        });
+
+        SearchBar.init();
+        SearchBar.bindInputEvt(function (obj, e) {
+            var searchText = $(obj).val();
+            $paper.each(function (k, v) {
+                 var type = $(v).attr('data-type');
+                 var title = $(v).find('.title').text();
+                 if(type.indexOf(searchText) === -1
+                 && title.indexOf(searchText) ===-1) {
+                     $(v).hide();
+                 } else {
+                     $(v).show();
+                 }
+            });
+        });
+        KeyBoard.bind('Ctrl-F', function () {
+           SearchBar.show();
+           return false;
+        });
+        KeyBoard.bind('Escape', function () {
+            SearchBar.hide();
+        });
+        KeyBoard.listen();
     });
-// });
+});

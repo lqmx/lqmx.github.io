@@ -9,9 +9,9 @@
     <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1519913430">
     <link rel="stylesheet" href="css/reset.css?v1519913430">
     <link rel="stylesheet" href="css/style.css?v1519913430">
+    <link rel="stylesheet" href="css/module.css?v1519913430">
     <link rel="stylesheet" href="css/iconfont/iconfont.css?v1519913430">
     <link rel="stylesheet" href="css/c.css?v1519913430">
-    <!--<script src="dep/require.js?1519913430"></script>-->
 </head>
 <body>
 <div class="table">
@@ -257,13 +257,14 @@
 </div>
 
 </div>
-<script src="dep/jquery.js?v1519913430"></script>
-<script src="module/drag/Drag.o.js?v1519913430"></script>
-<script src="js/index.js?v1519913430"></script>
-<!--<script >-->
-    <!--requirejs(['js/conf/r'], function(rc) {-->
-        <!--requirejs(['../js/index']);-->
-    <!--});-->
-<!--</script>-->
+<!--<script src="dep/jquery.js?v1519913430"></script>-->
+<!--<script src="module/drag/Drag.o.js?v1519913430"></script>-->
+<!--<script src="js/index.js?v1519913430"></script>-->
+<script src="dep/require.js?1519913430"></script>
+<script >
+    requirejs(['js/conf/r'], function(rc) {
+        requirejs(['../js/index']);
+    });
+</script>
 </body>
 </html>
