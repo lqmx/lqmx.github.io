@@ -9,11 +9,13 @@ define(function (require) {
             winWidth = $(document).width();
         var paperInfo = [];
         var isToPage = false;
+        var hideType = ['comic'];
 
         var $paper = $('.paper');
 
         $paper.each(function (k, v) {
-            var transformStyle = "rotate("+(Math.random()*360).toFixed(2)+"deg)";
+            var deg = (Math.random()*360).toFixed(2);
+            var transformStyle = "rotate("+deg+"deg)";
             var paper = {
                 wr: Math.random().toFixed(2),
                 hr: Math.random().toFixed(2),
@@ -21,15 +23,15 @@ define(function (require) {
             };
             paperInfo.push(paper);
             $(v).css({
-                left: ((winWidth-160) * paper.wr).toFixed(2) + 'px',
-                top:  ((winHeight-220) * paper.hr).toFixed(2) + 'px',
+                left: Math.abs(winWidth * paper.wr - 273).toFixed(2) + 'px',
+                top:  Math.abs(winHeight * paper.hr - 273).toFixed(2) + 'px',
                 transform: paper.transform
             }).show();
         });
         $paper.each(function (k, v) {
             var url = window.location.origin + htmlDir + $(v).attr('data-url');
             var type = $(v).attr('data-type');
-            if(type == 'comic') {
+            if(hideType.toString().indexOf(type) > -1) {
                 $(v).hide();
             }
             $(v).click(function () {
@@ -44,15 +46,6 @@ define(function (require) {
                     isToPage = true;
                 }
             });
-            // $(v).hover(function () {
-            //     $(this).css({
-            //         "z-index": 2
-            //     });
-            // }, function () {
-            //     $(this).css({
-            //         "z-index": 1
-            //     });
-            // });
             $(v).mouseleave(function () {
                 if(Drag.getDragStatus() == Drag.DRAG_STATUS.DRAGING) return;
                 $(this).css({
@@ -66,22 +59,21 @@ define(function (require) {
             });
             Drag.bind($(v));
         });
-
         SearchBar.init();
         SearchBar.bindInputEvt(function (obj, e) {
             var searchText = $(obj).val();
             $paper.each(function (k, v) {
                  var type = $(v).attr('data-type');
                  var title = $(v).find('.title').text();
-                 if(type.indexOf(searchText) === -1
-                 && title.indexOf(searchText) ===-1) {
+                 if((type.indexOf(searchText) === -1
+                 && title.indexOf(searchText) === -1) || hideType.toString().indexOf(type) > -1) {
                      $(v).hide();
                  } else {
                      $(v).show();
                  }
             });
         });
-        KeyBoard.bind('Ctrl-F', function () {
+        KeyBoard.bind('Ctrl-Shift-F', function () {
            SearchBar.show();
            return false;
         });

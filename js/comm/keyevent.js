@@ -28,9 +28,10 @@ define(['./key'], function (Key) {
                         && ctrl && shift && alt
                     ){
                         for(var i =0; i < key.fn.length; i ++) key.fn[i]();
-                        event.preventDefault();
+
                     }
                 });
+                // event.preventDefault();
             });
         }
 
