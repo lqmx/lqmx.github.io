@@ -26,4 +26,4 @@ note is lazying lazying...
 1. 在`data/md`文件夹里创建markdown笔记
 2. 运行构建脚本`./script/build.sh`
 
-###### 2018.03.02
+###### 2018.03.03
