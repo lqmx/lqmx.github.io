@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="update_time" content="1520260298">
+    <meta name="update_time" content="1520342435">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>MySQL技术内幕 第六章 锁</title>
-    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1520260298">
-    <link rel="stylesheet" href="../../css/reset.css?v1520260298">
-    <link rel="stylesheet" href="../../css/md.css?v1520260298">
-    <link rel="stylesheet" href="../../css/module.css?v1520260298">
-    <link rel="stylesheet" href="../../css/c.css?v1520260298">
-    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1520260298">
-    <script src="../../dep/require.js?1520260298"></script>
+    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1520342435">
+    <link rel="stylesheet" href="../../css/reset.css?v1520342435">
+    <link rel="stylesheet" href="../../css/md.css?v1520342435">
+    <link rel="stylesheet" href="../../css/module.css?v1520342435">
+    <link rel="stylesheet" href="../../css/c.css?v1520342435">
+    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1520342435">
+    <script src="../../dep/require.js?1520342435"></script>
 </head>
 <body>
     <div class="md"><h1>第六章 锁</h1>
@@ -207,8 +207,194 @@ READ事务隔离级别下,对于快照数据,总是读取事务开始时的行�
 <h3>6.4.2 解决Phantom Problem</h3>
 <p>Phantom Problem是指在同一个事务下,连续执行两次相同的SQL语句可能导致不同的结果,第二次
 的SQL语句可能会返回之前不存在的行。</p>
-<h3>6.5 锁问题</h3>
-<h6>2018.03.05</h6></div>
+<h2>6.5 锁问题</h2>
+<h3>6.5.1 脏读</h3>
+<p>脏数据:事务对缓冲池中行记录的修改,还没有被提交</p>
+<p>脏读的示例</p>
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th>Session A</th>
+<th>Session B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>set @@tx_isolation='read-uncommitted';</td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td></td>
+<td>set @@tx_isolation='read-uncommitted';</td>
+</tr>
+<tr>
+<td>3</td>
+<td></td>
+<td>begin</td>
+</tr>
+<tr>
+<td>4</td>
+<td></td>
+<td>select * from t</td>
+</tr>
+<tr>
+<td>5</td>
+<td>insert into t select 2</td>
+<td></td>
+</tr>
+<tr>
+<td>6</td>
+<td></td>
+<td>select * from t</td>
+</tr>
+</tbody>
+</table>
+<p>脏读发生的条件至少是需要事务的隔离级别为READ UNCOMMITTED</p>
+<h3>6.5.2 不可重复读</h3>
+<p>不可重复读是指一个事务内多次读取同一数据集合,在这个事务还没有结束的时候,另外一个事务也访问
+了该同一数据集合,并做了一些DML操作。</p>
+<p>脏读是未提交的数据,不可重复读是提交的数据</p>
+<p>不可重复读示例</p>
+<p>| Time | Session A | Session B |
+| 1 | set @@tx_isolation='read-committed |   |
+| 2 |   | set @@tx_isolation='read-committed |
+| 3 | begin | begin |
+| 4 | select <em> from t |   |
+| 5 |   | insert into t select 2 |
+| 6 |   | commit |
+| 7 | select </em> from t |   |</p>
+<p>一般来说,不可重复读是可以接受的,因为读到的是已经提交的数据,本身不会带来什么问题。</p>
+<p>InnoDB存储引擎的默认事务隔离级别是READ REPEATABLE,采用Next-Key Lock算法,避免了不可重复读的现象</p>
+<h3>6.5.3 丢失更新</h3>
+<p>丢失更新是另外一个锁导致的问题,就是一个事务的更新操作会被另外一个事务的更新操作所覆盖,从而
+到时数据不一致</p>
+<ul>
+<li>事务1查询一行数据,放入本地内存,显示给一个终端用户user1</li>
+<li>事务2查询这个记录,显示给终端用户user2</li>
+<li>user1修改了这行记录,更新并提交</li>
+<li>user2修改了这行记录,更新并提交</li>
+</ul>
+<p>丢失更新问题的处理</p>
+<p>| Time | Session A | Session B |
+| 1 | begin |   |
+| 2 | select cash into @cash from account where user=pUser for update  |   |
+| 3 |   | select cash into @cash from account where user=pUser for update; -- 等待 |
+|   | ... | ... |
+| m | update account set cash=@cash-9000 where user=pUser |   |
+| m+1 | commit |   |
+| m+2 |   | update account set cash=@cash-1 where user=pUser |
+| m+3 |   | commit |</p>
+<h2>6.6 阻塞</h2>
+<p>因为不同锁之间的兼容性关系,在有些时刻一个事务中的锁需要等待另外一个事务中的锁释放它所占用的资源,
+这就是阻塞</p>
+<p><code class="inline-code">innodb_lock_wait_time</code>:控制等待的时间(动态参数)</p>
+<p><code class="inline-code">innodb_rollback_on_timeout</code>:设定是否在超时时对进行中事务进行回滚操作</p>
+<p>当发生超时时,数据库会抛出一个1205的错误</p>
+<h2>6.7 死锁</h2>
+<h3>6.7.1 死锁的概念</h3>
+<p>死锁是指两个或两个以上的事务正在执行过程中,因争夺锁资源而造成的一种相互等待的现象。</p>
+<p>解决死锁最简单的一种方法是超时,<code class="inline-code">innodb_lock_wait_time</code></p>
+<p>当前数据库还普遍采用wait-for graph(等待图)的方式来进行死锁检测。</p>
+<p>wait-for graph要求数据库保存以下两种信息:</p>
+<ul>
+<li>锁的信息链表</li>
+<li>事务等待链表</li>
+</ul>
+<h3>6.7.2 死锁概率</h3>
+<p>n+1个事务,每个事务r+1个操作,每个操作从R行数据随机操作一行数据</p>
+<p>一个事务发生死锁的概率 约等于 nrr/(2R)</p>
+<p>系统中任何一个事务发生死锁的改路 约等于 nnrrrr/(4RR)</p>
+<ul>
+<li>系统中事务的数量越多发生死锁的概率越大</li>
+<li>每个事务操作的数量越多,发生死锁的概率越大</li>
+<li>操作数据的集合越小,发生死锁的概率越大</li>
+</ul>
+<h3>6.7.3 死锁的示例</h3>
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th>Session A</th>
+<th>Session B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>begin</td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>select * from t where a = 1 for update;</td>
+<td>begin</td>
+</tr>
+<tr>
+<td>3</td>
+<td></td>
+<td>select * from t where a = 2 for update;</td>
+</tr>
+<tr>
+<td>4</td>
+<td>select * from t where a = 2 for update;</td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td></td>
+<td>select * from t where a = 1 for update;</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th>Session A</th>
+<th>Session B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>begin</td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td></td>
+<td>begin</td>
+</tr>
+<tr>
+<td>3</td>
+<td>select * from t where a = 4 for update;</td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td></td>
+<td>select * from t where a &lt;= 4 lock in share mode</td>
+</tr>
+<tr>
+<td>5</td>
+<td>insert into t values (3)</td>
+<td></td>
+</tr>
+<tr>
+<td>6</td>
+<td></td>
+<td>-- 事务获得锁,正常运行</td>
+</tr>
+</tbody>
+</table>
+<h2>6.8 锁升级</h2>
+<p>锁升级是指将当前锁的粒度降低。</p>
+<p>InnoDB不存在锁升级的问题</p>
+<h2>6.9 小结</h2>
+<h6>2018.03.06</h6></div>
 <script >
     requirejs(['../../js/conf/r'], function(rc) {
         requirejs(['../js/html']);

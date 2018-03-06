@@ -185,3 +185,6 @@ body {
     border-left: 5px solid #292b36;
 }
 
+.md strong {
+    font-weight: bold;
+}
