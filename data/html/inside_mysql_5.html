@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="update_time" content="1520345237">
+    <meta name="update_time" content="1520384151">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>MySQL技术内幕 第五章 索引与算法</title>
-    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1520345237">
-    <link rel="stylesheet" href="../../css/reset.css?v1520345237">
-    <link rel="stylesheet" href="../../css/md.css?v1520345237">
-    <link rel="stylesheet" href="../../css/module.css?v1520345237">
-    <link rel="stylesheet" href="../../css/c.css?v1520345237">
-    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1520345237">
-    <script src="../../dep/require.js?1520345237"></script>
+    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1520384151">
+    <link rel="stylesheet" href="../../css/reset.css?v1520384151">
+    <link rel="stylesheet" href="../../css/md.css?v1520384151">
+    <link rel="stylesheet" href="../../css/module.css?v1520384151">
+    <link rel="stylesheet" href="../../css/c.css?v1520384151">
+    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1520384151">
+    <script src="../../dep/require.js?1520384151"></script>
 </head>
 <body>
     <div class="md"><h1>第五章 索引与算法</h1>
@@ -51,7 +51,46 @@ Directory进行二分查找得到的。</p>
 <li>中间节点小于填充因子</li>
 </ul>
 <h2>5.4 B+树索引</h2>
-<h6>2018.03.06</h6></div>
+<p>B+索引在数据库中有一个特点是高扇出性,因此在数据库中,B+树的高度一般都在2-4层。</p>
+<p>数据库中B+树索引可以分为聚集索引和辅助索引。聚集索引与辅助索引不同的是,叶子节点存放的是否
+是一整行的信息。</p>
+<h3>5.4.1 聚集索引</h3>
+<p>聚集索引按每张表的主键构造一棵B+树,同时叶子节点中存放的即为整张表的行记录数据,也将聚集索引
+的叶子节点称为数据页。</p>
+<p>聚集索引能够在B+树索引的叶子节点上直接找到数据。</p>
+<p>聚集索引的存储并不是物理上连续的,而是逻辑上连续的。</p>
+<ul>
+<li>页通过双向链表链接,页按照主键的顺序排序</li>
+<li>每个页中的记录也是通过双向链表进行维护的,物理存储上可以同样不按照主键存储</li>
+</ul>
+<p>聚集索引的另一个好处是,它对于主键的排序查找和范围查找速度非常快。</p>
+<h3>5.4.2 辅助索引</h3>
+<p>对于辅助索引,叶子节点并不包含行记录的全部数据。</p>
+<p>辅助索引的存在不影响数据在聚集索引中的组织,每张表可以有多个辅助索引。</p>
+<p>通过辅助索引来查找数据时,InnoDB会遍历辅助索引并通过叶级别的指针获得指向主键索引的主键,
+然后再通过主键索引来找到一个完整的行记录。</p>
+<h3>5.4.3 B+树索引的分裂</h3>
+<h3>5.4.4 B+树索引的管理</h3>
+<ol>
+<li>索引管理</li>
+</ol>
+<pre><code class="language-mysql" data-comment="">alter table t add key idx_b(b(100));
+show index from t;</code></pre>
+<ul>
+<li>Table 索引所在的表名</li>
+<li>Non_unique 非唯一索引</li>
+<li>Key_name 索引的名字</li>
+<li>Seq_in_index 索引在该列的位置</li>
+<li>Column_name 索引列的名称</li>
+<li>Collation 列以什么形式存储在索引中</li>
+<li>Cardinality 索引唯一值的数目</li>
+<li>Sub_part 是否是列的部分被索引</li>
+<li>Packed 关键字如何被压缩</li>
+<li>Null 列是否含有null</li>
+<li>Index_type 索引的类型</li>
+<li>Comment 注释</li>
+</ul>
+<h6>2018.03.07</h6></div>
 <script >
     requirejs(['../../js/conf/r'], function(rc) {
         requirejs(['../js/html']);
