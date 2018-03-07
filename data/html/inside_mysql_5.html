@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="update_time" content="1520384151">
+    <meta name="update_time" content="1520430727">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>MySQL技术内幕 第五章 索引与算法</title>
-    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1520384151">
-    <link rel="stylesheet" href="../../css/reset.css?v1520384151">
-    <link rel="stylesheet" href="../../css/md.css?v1520384151">
-    <link rel="stylesheet" href="../../css/module.css?v1520384151">
-    <link rel="stylesheet" href="../../css/c.css?v1520384151">
-    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1520384151">
-    <script src="../../dep/require.js?1520384151"></script>
+    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1520430727">
+    <link rel="stylesheet" href="../../css/reset.css?v1520430727">
+    <link rel="stylesheet" href="../../css/md.css?v1520430727">
+    <link rel="stylesheet" href="../../css/module.css?v1520430727">
+    <link rel="stylesheet" href="../../css/c.css?v1520430727">
+    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1520430727">
+    <script src="../../dep/require.js?1520430727"></script>
 </head>
 <body>
     <div class="md"><h1>第五章 索引与算法</h1>
@@ -90,6 +90,114 @@ show index from t;</code></pre>
 <li>Index_type 索引的类型</li>
 <li>Comment 注释</li>
 </ul>
+<ol start="2">
+<li>Fast Index Creation</li>
+</ol>
+<p>MySQL5.5版本之前,存在一个普遍被人诟病的问题: 在对于索引的添加或者删除的这类DDL操作,过程为</p>
+<ul>
+<li>首先先建一张临时表,表结构通过alter table新定义的结构</li>
+<li>然后把原表的数据导入到临时表</li>
+<li>接着删除原表</li>
+<li>最后把临时表重命名为原来的表名</li>
+</ul>
+<p>InnoDB1.0.x开始支持Fast Index Creation</p>
+<ul>
+<li>创建: 对创建索引的表加上一个S锁。不需要重建表。</li>
+<li>删除: 更新内部视图,并将辅助索引的空间标记为可用,同时删除内部视图上对该表的索引定义</li>
+</ul>
+<p>FIC方式只限于辅助索引,对于主键的创建和删除同样需要重建一张表。</p>
+<ol start="3">
+<li>Online Schema Change</li>
+</ol>
+<p>在线是指在事务的创建过程中,可以有读写事务对表进行操作。</p>
+<p>OSC实现,是一个PHP脚本,要求进行修改的表要有主键,且表本身不能存在外键和触发器。</p>
+<ol start="4">
+<li>Online DDL</li>
+</ol>
+<p>允许辅助索引创建的同时,还允许诸如Insert、update、delete的DML操作</p>
+<p>以下DDL可以通过'在线'的方式进行操作</p>
+<ul>
+<li>辅助索引的创建和删除</li>
+<li>改变自增长值</li>
+<li>添加或删除外键约束</li>
+<li>列的重命名</li>
+</ul>
+<pre><code class="language-txt" data-comment="">alter table tbl_name
+| add {index|key} [index_name]
+[index_type] (index_col_name, ...) [index_option] ...
+algorithm [=] {default|inplace|copy}
+lock [=] {default|none|shared|exclusive}</code></pre>
+<p>algorithm指定创建或删除索引的算法</p>
+<ul>
+<li>copy 创建临时表的方式</li>
+<li>inplace 不需要创建临时表</li>
+<li>default 根据<code class="inline-code">old_alter_table</code>来判断是通过inplace还是copy</li>
+</ul>
+<p>lock为创建或删除索引对表添加锁的情况</p>
+<ul>
+<li>none 不添加任何锁</li>
+<li>share 加s锁</li>
+<li>exclusive 加s锁</li>
+<li>default 以none到share到exclusive依次判断是否可用</li>
+</ul>
+<p>实现Online DDL原理为:在创建或删除同时,将insert、update、delete这类DML操作日志写入缓存。
+完成后索引操作后重做应用到表上。</p>
+<h2>5.5 Cardinality值</h2>
+<h3>5.5.1 什么是Cardinality</h3>
+<p>Cardinality表示索引中不重复记录数量的预估值。</p>
+<p>Cardinality/n_row_in_table 应该接近于1,否则考虑是否需要索引</p>
+<h3>5.5.2 InnoDB存储引擎的Cardinality统计</h3>
+<p>Cardinality的统计是放在存储引擎层的。</p>
+<p>数据库对于Cardinality的统计是通过采样的方式来完成的。</p>
+<p>InnoDB对更新Cardinality的策略为:</p>
+<ul>
+<li>表中1/16的数据已发生改变</li>
+<li>stat_modified_counter &gt; 2 000 000 000</li>
+</ul>
+<p>InnoDB中,Cardinality值是通过对8个叶子节点预估而得的,不是一个实际精确的值。</p>
+<h2>5.6 B+树索引的应用</h2>
+<h3>5.6.1 不同应用中B+树索引的使用</h3>
+<h3>5.6.2 联合索引</h3>
+<p>联合索引是指对表上的多个列进行索引。</p>
+<p>联合索引在叶子节点已经排好序了。</p>
+<p>对于联合索引(a,b),<code class="inline-code">select ... from table where a=xxx order by b</code>可以直接使用联合索引得到结果。</p>
+<h3>5.6.3 覆盖索引</h3>
+<p>覆盖索引:从辅助索引中就可以得到查询的记录,而不需要查询聚集索引中的记录。</p>
+<p>下面语句都可仅用一次辅助联合索引来完成查询:</p>
+<pre><code class="language-mysql" data-comment="">select key2 from table where key1=xxx;
+select primary key2,key2 from table where key1=xxx;
+select primary key1,primary key2, key2 from table where key1=xxx;</code></pre>
+<h3>5.6.4 优化器选择不适用索引的情况</h3>
+<p>对于不能进行索引覆盖的情况,优化器选择辅助索引的情况是,通过辅助索引查找的数据是少量的。</p>
+<h3>5.6.5 索引提示</h3>
+<p>使用索引提示的情况</p>
+<ul>
+<li>MySQL优化器错误的选择了某个索引,导致SQL运行慢</li>
+<li>某SQL语句可以选择的索引比较多,优化器选择执行计划时间的开销大于SQL语句本身</li>
+</ul>
+<pre><code class="language-mysql" data-comment="">select * from t use index(a) where a = 1 and b = 2;
+select * from t force index(a) where a = 1 and b = 2;</code></pre>
+<h3>5.6.6 Multi-Range Read 优化</h3>
+<p>Multi-Range Read优化的目的是为了减少磁盘的随机访问,并且将随机访问转化为较顺序的数据访问。</p>
+<p>MRR好处:</p>
+<ul>
+<li>MMR使数据访问变得顺序。在查询辅助索引时,先根据得到的查询结果,按照主键进行排序,并按照主键
+排序的顺序进行书签查找</li>
+<li>减少缓冲池中页被替换的次数</li>
+<li>批量处理对键值的查询操作</li>
+</ul>
+<p>InnoDB和MyISAM的范围查找和JOIN查找,MRR工作方式如下:</p>
+<ul>
+<li>将查询得到的辅助索引键值存放在一个缓存中,这是缓存中的数据是根据辅助索引排序的</li>
+<li>将缓存中的键值更加rowid排序</li>
+<li>根据rowid排序顺序访问实际的数据文件</li>
+</ul>
+<p>MRR可以将某些范围查询,拆分为键值对,以此来进行批量的数据查询,在拆分过程中,直接过滤一些不符合
+查询条件的数据。</p>
+<pre><code class="language-mysql" data-comment="">set @@optimizer_switch='mrr=on,mrr_cost_based=off';</code></pre>
+<h3>5.6.7 Index Condition Pushdown(ICP)优化</h3>
+<p>在取出索引的同事,判断是否可以进行where条件过滤,也就是将where的部分过滤操作放在了存储引擎层。</p>
+<h2>5.7 哈希算法</h2>
 <h6>2018.03.07</h6></div>
 <script >
     requirejs(['../../js/conf/r'], function(rc) {
