@@ -1,6 +1,6 @@
 body {
     /*background: #5d4037;*/
-    background: url(../img/bg3.jpeg) repeat;
+    background: url(../img/bg7.jpeg) repeat;
 }
 .table {
     width: 90%;
@@ -79,3 +79,36 @@ body {
     clear: both;
 }
 
+.note-list {
+    width: 90%;
+    margin: 0 auto;
+}
+.note-list .note-item {
+    width: 43%;
+    float: left;
+    height: 60px;
+    margin: 15px;
+    padding: 10px;
+    background: #ffffff;
+    box-shadow:0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: pointer;
+}
+.note-list .note-item .title{
+    height: 40px;
+    width: 90%;
+    line-height: 40px;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+    font-size: 16px;
+}
+.note-list .note-item .date {
+    float: right;
+    margin: 0 10px;
+    font-size: 15px;
+    font-style: italic;
+}

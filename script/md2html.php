@@ -10,11 +10,7 @@ $base = file_get_contents("./tpl/note.html");
 $base = str_replace('$v', $v, $base);
 
 $file_flag = file_get_contents(".fileflag");
-if(empty($file_flag)) {
-    $file_flag = array();
-} else  {
-    $file_flag = json_decode($file_flag, true);
-}
+$file_flag = empty($file_flag)?[]:json_decode($file_flag, true);
 
 $all = ($argc >= 2 and $argv[1] == 'all') ? true : false;
 $force = ($argc >= 2 and $argv[1] == 'f') ? true : false;
@@ -26,9 +22,7 @@ foreach ($mds as $md) {
 
     if($md != $readme) {
         list(, $type, $url, $filename) = explode('.', basename($md, '.md'));
-        if($type == 'ing') {
-            continue;
-        }
+        if($type == 'ing') continue;
     } else {
         $url = $filename = "README";
     }

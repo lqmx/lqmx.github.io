@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="update_time" content="1520430727">
+    <meta name="update_time" content="1520519766">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>MySQL技术内幕 第五章 索引与算法</title>
-    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1520430727">
-    <link rel="stylesheet" href="../../css/reset.css?v1520430727">
-    <link rel="stylesheet" href="../../css/md.css?v1520430727">
-    <link rel="stylesheet" href="../../css/module.css?v1520430727">
-    <link rel="stylesheet" href="../../css/c.css?v1520430727">
-    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1520430727">
-    <script src="../../dep/require.js?1520430727"></script>
+    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1520519766">
+    <link rel="stylesheet" href="../../css/reset.css?v1520519766">
+    <link rel="stylesheet" href="../../css/md.css?v1520519766">
+    <link rel="stylesheet" href="../../css/module.css?v1520519766">
+    <link rel="stylesheet" href="../../css/c.css?v1520519766">
+    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1520519766">
+    <script src="../../dep/require.js?1520519766"></script>
 </head>
 <body>
     <div class="md"><h1>第五章 索引与算法</h1>
@@ -198,7 +198,28 @@ select * from t force index(a) where a = 1 and b = 2;</code></pre>
 <h3>5.6.7 Index Condition Pushdown(ICP)优化</h3>
 <p>在取出索引的同事,判断是否可以进行where条件过滤,也就是将where的部分过滤操作放在了存储引擎层。</p>
 <h2>5.7 哈希算法</h2>
-<h6>2018.03.07</h6></div>
+<h3>5.7.1 哈希表</h3>
+<p>哈希表也称散列表,由直接寻址表改进而来。</p>
+<h3>5.7.2 InnoDB存储引擎中的哈希算法</h3>
+<p>InnoDB使用哈希算法来对字典进行查找,其冲突机制采用链表方式,哈希函数采用除法散列方式。</p>
+<h3>5.7.3 自适应哈希索引</h3>
+<p>哈希索引智能用来搜索等值的查询。</p>
+<h2>5.8 全文检索</h2>
+<h3>5.8.1 概述</h3>
+<p>全文检索是将存储于数据库中的整本书或整篇文章中的任意内容信息查找出来的技术。</p>
+<h3>5.8.2 倒排索引</h3>
+<p>全文检索通常使用倒排索引来实现。倒排索引用B+树索引一样,也是一种索引结构。它在辅助表中存储
+了单词与单词自身在一个或多个文档中所在位置之间的映射。通常利用关联数组实现,拥有两种表现形式:</p>
+<ul>
+<li>inverted file index,其表现形式为{单词,单词所在文档的ID}</li>
+<li>full inverted index,其表现形式为{单词,(单词所在文档ID,在具体文档中的位置)}</li>
+</ul>
+<h3>5.8.3 InnoDB全文检索</h3>
+<p>在InnoDB中,将(DocumentId, Position)视为一个'ilist'。因此在全文检索的表中,有两个列,
+一个是word字段,另一个是ilist字段,并且在word字段上有索引。</p>
+<p>倒排索引将word存在Auxiliary Table中,该表存放在磁盘上。</p>
+<p>FTS Index Cache是一个红黑树结构,其根据(word,ilist)进行排序,用来提高全文检索的性能。</p>
+<h6>2018.03.08</h6></div>
 <script >
     requirejs(['../../js/conf/r'], function(rc) {
         requirejs(['../js/html']);
