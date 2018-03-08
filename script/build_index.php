@@ -53,7 +53,7 @@ foreach ($files as $file) {
     // ..
     $dateFormat = date("d M Y", strtotime($date));
     $htmlNotePapers .= sprintf($paperDiv, $type, $url, $date, "bg-$type", $imgDiv, $title, $dateFormat);
-    $htmlNoteList .= sprintf($noteItemDiv, "border-$type", $title, $type, $url, $date, $title, $dateFormat);
+    $htmlNoteList .= sprintf($noteItemDiv, "border-$type", $type, $url, $date, $title, $dateFormat);
 
 
     // ..
