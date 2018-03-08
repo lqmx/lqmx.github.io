@@ -97,6 +97,15 @@ body {
     user-select: none;
     cursor: pointer;
 }
+.note-list .note-item:hover{
+    box-shadow: 0 8px 12px 0 rgba(0, 0, 0, 0.2), 0 10px 26px 0 rgba(0, 0, 0, 0.19);
+    transition: 0.5s;
+    -webkit-transform: scale(1.1);
+    -moz-transform: scale(1.1);
+    -ms-transform: scale(1.1);
+    -o-transform: scale(1.1);
+    transform: scale(1.1);
+}
 .note-list .note-item .title{
     height: 40px;
     width: 90%;
