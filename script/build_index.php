@@ -128,7 +128,7 @@ $strCatalog = "";
 foreach ($catalog as $k => $v) {
     $strCatalog .= "# " . (isset($typename[$k])?$typename[$k]:'其他') . PHP_EOL .PHP_EOL;
     foreach ($v as $vv) {
-        $strCatalog .= "[{$vv['title']}](https://lqmx.github.io/data/html/{$vv['url']}.html)" . PHP_EOL . PHP_EOL;
+        $strCatalog .= "[{$vv['title']}](https://lqmx.github.io/data/html/{$vv['url']})" . PHP_EOL . PHP_EOL;
     }
 }
 
