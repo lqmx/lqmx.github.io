@@ -44,7 +44,9 @@
 .bg-lyric {
     background: #c9feec;
 }
-
+.bg-game {
+    background: #c4d381;
+}
 /*border style*/
 
 .border-web {
@@ -91,4 +93,8 @@
 }
 .border-lyric {
     border-left: 7px solid #c9feec;
+}
+
+.border-game {
+    border-left: 7px solid #c4d381;
 }

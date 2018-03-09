@@ -2,7 +2,7 @@
 
 $config = parse_ini_file("./config.ini");
 
-$v = time();
+$now = $v = time();
 $base = file_get_contents("tpl/index.html");
 $base = str_replace('$v', $v, $base);
 
@@ -63,8 +63,8 @@ foreach ($files as $file) {
             'url' => $url,
             'title' => $title,
             'date' => $date,
-            'isBg' => !empty($img),
-            'bg' => !empty($img) ? basename($img[0]) : '',
+            'isBg' => !empty($imgDiv),
+            'bg' => !empty($imgDiv) ? basename($img[0]) : '',
             'bgColor' => "bg-$type",
         );
     }
@@ -84,6 +84,58 @@ NOTEDATA;
 // ..
 file_put_contents("../js/notes.js", sprintf($notesData, json_encode($notes)));
 file_put_contents("./notes.json", json_encode($notes));
+
+// ..
+$catalog = array();
+$typename = array (
+    'web' => "WEB",
+    'it' => "IT",
+    'memo' => '备忘',
+    'algorithm' => '算法',
+    'php' => 'PHP',
+    'js' => 'JS',
+    'literature' => '文学',
+    'mysql' => 'MySQL',
+    'snippet'  => '代码片',
+    'comic' => '动漫',
+    'cheatsheet' => 'CheatSheet',
+    'network' => '网络',
+    'interview' => '面试',
+    'lyric' => '歌词',
+    'game' => '游戏',
+    'intro' => '简介',
+);
+
+
+foreach ($notes as $v) {
+    if(!isset($catalog[$v['type']])) $catalog[$v['type']] = array();
+    $catalog[$v['type']][] = $v;
+}
+
+$updateTime = date('Y.m.d', $now);
+$catalogMd = <<<CATALOGMD
+# 目录
+
+###### 2018.03.09
+
+%s
+
+###### $updateTime
+CATALOGMD;
+
+$strCatalog = "";
+
+foreach ($catalog as $k => $v) {
+    $strCatalog .= "# " . (isset($typename[$k])?$typename[$k]:'其他') . PHP_EOL .PHP_EOL;
+    foreach ($v as $vv) {
+        $strCatalog .= "[{$vv['title']}](https://lqmx.github.io/data/html/{$vv['url']}.html)" . PHP_EOL . PHP_EOL;
+    }
+}
+
+$catalogMd = sprintf($catalogMd, $strCatalog);
+
+file_put_contents("../CATALOG.md", $catalogMd);
+
 
 //$c = <<<COLOR
 //.bg-%s {
