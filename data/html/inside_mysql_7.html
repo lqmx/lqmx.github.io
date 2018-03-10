@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="update_time" content="1520430727">
+    <meta name="update_time" content="1520690052">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>MySQL技术内幕 第七章 事务</title>
-    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1520430727">
-    <link rel="stylesheet" href="../../css/reset.css?v1520430727">
-    <link rel="stylesheet" href="../../css/md.css?v1520430727">
-    <link rel="stylesheet" href="../../css/module.css?v1520430727">
-    <link rel="stylesheet" href="../../css/c.css?v1520430727">
-    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1520430727">
-    <script src="../../dep/require.js?1520430727"></script>
+    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1520690052">
+    <link rel="stylesheet" href="../../css/reset.css?v1520690052">
+    <link rel="stylesheet" href="../../css/md.css?v1520690052">
+    <link rel="stylesheet" href="../../css/module.css?v1520690052">
+    <link rel="stylesheet" href="../../css/c.css?v1520690052">
+    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1520690052">
+    <script src="../../dep/require.js?1520690052"></script>
 </head>
 <body>
     <div class="md"><h1>第七章 事务</h1>
@@ -28,7 +28,58 @@
 </ul>
 <h2>7.1 认识事务</h2>
 <h3>7.1.1 概述</h3>
-<h6>2018.03.07</h6></div>
+<ul>
+<li>A(Atomicity) 原子性</li>
+</ul>
+<p>原子性指整个数据库事务是不可分割的工作单位。要么全做,要么都不做。</p>
+<ul>
+<li>C(Consistency) 一致性</li>
+</ul>
+<p>一致性是指事务将数据库从一种状态转变为下一种一致的状态。</p>
+<ul>
+<li>I(Isolation) 隔离性</li>
+</ul>
+<p>事务的隔离性要求每个读写事务中的对象对其他事务的操作对象能相互分离,即该事务提交前对其他事务
+都不可见,通常这使用锁来实现。</p>
+<ul>
+<li>D(Durability) 持久性</li>
+</ul>
+<p>事务一旦提交,其结果就是永久的。</p>
+<h3>7.1.2 分类</h3>
+<p>从事务理论的角度来说,可以把事务分为以下几种类型:</p>
+<ul>
+<li>扁平事务</li>
+<li>带有保存点的扁平事务</li>
+<li>链事务</li>
+<li>嵌套事务</li>
+<li>分布式事务</li>
+</ul>
+<ol>
+<li>扁平事务</li>
+</ol>
+<p>事务类型中最简单的一种。扁平事务中,所有操作都处于同一层次,要么多执行,要么都回滚。</p>
+<p>扁平事务的主要限制是不能提交或者回滚事务中的某一部分,或分几个步骤提交。</p>
+<ol start="2">
+<li>带有保存点的扁平事务</li>
+</ol>
+<p>除了支持扁平事务支持的操作外,允许在事务执行过程中回滚到同一事务中较早的一个状态。</p>
+<p>保存点用来通知系统应该记住事务当前的状态,以便当之后发生错误时,事务能回到保存点当时的状态。</p>
+<ol start="3">
+<li>链事务</li>
+</ol>
+<p>链事务可视为保存点模式的一种变种。带有保存点的扁平事务,当发生系统崩溃时,所有的保存点都将消失,因为其
+保存点是易失的,而非持久的。这意味着当进行恢复时,事务需要从开始处重新执行,而不能从最近的一个保存点继续执行。</p>
+<p>链事务的思想是:在提交一个事务时,释放不需要的数据对象,将必要的处理上下文隐式地传给下一个要开始的事务。</p>
+<ol start="4">
+<li>嵌套事务</li>
+</ol>
+<p>嵌套事务是一个层次结构框架。由一个顶层事务控制各个层次的事务。</p>
+<ol start="5">
+<li>分布式事务</li>
+</ol>
+<p>是一个在分布式环境下运行的扁平事务。</p>
+<h2>7.2 事务的实现</h2>
+<h6>2018.03.10</h6></div>
 <script >
     requirejs(['../../js/conf/r'], function(rc) {
         requirejs(['../js/html']);
