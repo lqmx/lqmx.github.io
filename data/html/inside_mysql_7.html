@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="update_time" content="1520780700">
+    <meta name="update_time" content="1520866171">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>MySQL技术内幕 第七章 事务</title>
-    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1520780700">
-    <link rel="stylesheet" href="../../css/reset.css?v1520780700">
-    <link rel="stylesheet" href="../../css/md.css?v1520780700">
-    <link rel="stylesheet" href="../../css/module.css?v1520780700">
-    <link rel="stylesheet" href="../../css/c.css?v1520780700">
-    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1520780700">
-    <script src="../../dep/require.js?1520780700"></script>
+    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1520866171">
+    <link rel="stylesheet" href="../../css/reset.css?v1520866171">
+    <link rel="stylesheet" href="../../css/md.css?v1520866171">
+    <link rel="stylesheet" href="../../css/module.css?v1520866171">
+    <link rel="stylesheet" href="../../css/c.css?v1520866171">
+    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1520866171">
+    <script src="../../dep/require.js?1520866171"></script>
 </head>
 <body>
     <div class="md"><h1>第七章 事务</h1>
@@ -79,7 +79,46 @@
 </ol>
 <p>是一个在分布式环境下运行的扁平事务。</p>
 <h2>7.2 事务的实现</h2>
-<h6>2018.03.11</h6></div>
+<p>事务隔离性由锁来实现,原子性、一致性、持久性通过数据库的redo log和undo log来完成。
+redo log为重做日志,用来保证事务的原子性和持久性。undo log用来保证事务的一致性。</p>
+<p>redo恢复提交事务修改的页操作,undo回滚行记录到某个特定版本。redo通常是物理日志,记录的是
+页的物理修改操作,undo是逻辑日志,根据每行记录进行记录。</p>
+<h3>7.2.1 redo</h3>
+<ol>
+<li>基本概念</li>
+</ol>
+<p>重做日志用来实现事务的持久性,即事务ACID中的D。其由两部分组成:一是内存中的重做日志缓冲,
+其是易失的;二是重做日志文件,其实持久的。</p>
+<p>InnoDB通过Force Log at Commit机制实现事务的持久性,即事务提交时,必须先将该事务的所有
+日志写入到重做日志文件进行持久化,待事务commit完成后才算完成。</p>
+<p><code class="inline-code">innodb_flush_log_at_trx_commit</code>用来控制重做日志刷新到磁盘的策略。</p>
+<p>binlog和redo log的异同</p>
+<p>同: 都是记录了对于数据库操作的日志</p>
+<p>异:</p>
+<ul>
+<li>redo log是存储引擎层产生的,binlog是数据库上层产生的,并且binlog不仅仅针对于InnoDB,</li>
+<li>binlog为逻辑日志,记录的为对应的SQL语句,redo log为物理格式日志,记录的是对页的修改</li>
+<li>binlog只在事务提交完成后进行一次写入。redo log在事务进行中不断被写入,</li>
+</ul>
+<ol start="2">
+<li>log block</li>
+</ol>
+<p>InnoDB中,重做日志是以512字节存储的,重做日志缓存、重做日志文件都是以块的形式进行保存的,
+称之为重做日志块,每块大小512字节。</p>
+<p>日志块由三个部分组成:日志块头、日志内容和日志块尾。</p>
+<ol start="3">
+<li>log group</li>
+</ol>
+<p>log group为重做日志组,其中有多个重做日志文件。log group是一个逻辑上的概念,并没有一个
+实际存储的物理文件来表示log group信息。</p>
+<p>InnoDB中,log buffer根据一定的规则将内存中的log block刷新到磁盘</p>
+<p>具体规则为:</p>
+<ul>
+<li>事务提交时</li>
+<li>当log buffer中有一半的内存空间已经被使用时</li>
+<li>log checkpoint时</li>
+</ul>
+<h6>2018.03.12</h6></div>
 <script >
     requirejs(['../../js/conf/r'], function(rc) {
         requirejs(['../js/html']);
