@@ -9,7 +9,7 @@ define(function (require) {
             winWidth = $(document).width();
         var paperInfo = [];
         var isToPage = false;
-        var hideType = ['comic'];
+        var hideType = ['comic','game','lyric'];
 
         var showType = "paper";
 
