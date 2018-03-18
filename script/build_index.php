@@ -126,7 +126,7 @@ CATALOGMD;
 $strCatalog = "";
 
 foreach ($catalog as $k => $v) {
-    $strCatalog .= "# " . (isset($typename[$k])?$typename[$k]:'其他') . PHP_EOL .PHP_EOL;
+    $strCatalog .= "## " . (isset($typename[$k])?$typename[$k]:'其他') . PHP_EOL .PHP_EOL;
     foreach ($v as $vv) {
         $strCatalog .= "[{$vv['title']}](https://lqmx.github.io/data/html/{$vv['url']})" . PHP_EOL . PHP_EOL;
     }
@@ -135,6 +135,16 @@ foreach ($catalog as $k => $v) {
 $catalogMd = sprintf($catalogMd, $strCatalog);
 
 file_put_contents("../CATALOG.md", $catalogMd);
+
+
+include "../dep/Parsedown.php";
+$parsedown = new Parsedown();
+$markdown = file_get_contents('../CATALOG.md');
+$html = $parsedown->text($markdown);
+$base = file_get_contents("./tpl/note.html");
+$base = str_replace('$v', time(), $base);
+$html = sprintf($base, 'CATALOG', $html);
+file_put_contents($config['html_dir']."catalog.html", $html);
 
 
 //$c = <<<COLOR

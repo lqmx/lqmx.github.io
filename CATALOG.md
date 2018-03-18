@@ -2,13 +2,13 @@
 
 ###### 2018.03.09
 
-# WEB
+## WEB
 
 [双向数据绑定](https://lqmx.github.io/data/html/data_binding)
 
 [虚拟DOM](https://lqmx.github.io/data/html/virtual_dom)
 
-# IT
+## IT
 
 [观察者模式](https://lqmx.github.io/data/html/observer)
 
@@ -18,17 +18,19 @@
 
 [同步、异步、阻塞、非阻塞](https://lqmx.github.io/data/html/synblock)
 
-# 备忘
+## 备忘
 
 [Markdown基本语法](https://lqmx.github.io/data/html/markdown)
 
 [Git备忘](https://lqmx.github.io/data/html/git)
 
-# 算法
+## 算法
 
 [最小字符串编辑距离](https://lqmx.github.io/data/html/edit_distance)
 
-# PHP
+[算法之美 排序](https://lqmx.github.io/data/html/sfzm_11)
+
+## PHP
 
 [PHP核心技术与最佳实践-第八章-缓存详解](https://lqmx.github.io/data/html/php_core_technology_and_best_practice_8)
 
@@ -44,11 +46,11 @@
 
 [PHP核心技术与最佳实践 第十章 Redis使用与实践](https://lqmx.github.io/data/html/php_core_technology_and_best_practice_10)
 
-# JS
+## JS
 
 [RequireJs学习笔记](https://lqmx.github.io/data/html/requirejs)
 
-# 文学
+## 文学
 
 [人类简史-从动物到上帝](https://lqmx.github.io/data/html/sapiens_a_brief_history_of_humankind)
 
@@ -56,7 +58,7 @@
 
 [三体 死神永生](https://lqmx.github.io/data/html/threebody3)
 
-# MySQL
+## MySQL
 
 [网易技术部的MySQL中文资料](https://lqmx.github.io/data/html/netease_mysql)
 
@@ -74,17 +76,17 @@
 
 [MySQL技术内幕 第七章 事务](https://lqmx.github.io/data/html/inside_mysql_7)
 
-# 代码片
+## 代码片
 
 [JsSnippet](https://lqmx.github.io/data/html/snippet_js)
 
-# 动漫
+## 动漫
 
 [海贼王](https://lqmx.github.io/data/html/hzw)
 
 [名侦探柯南](https://lqmx.github.io/data/html/mztkn)
 
-# CheatSheet
+## CheatSheet
 
 [bash速查表](https://lqmx.github.io/data/html/bash_cheatsheet)
 
@@ -92,15 +94,15 @@
 
 [Tmux cheatsheet](https://lqmx.github.io/data/html/tmux_cheatsheet)
 
-# 网络
+## 网络
 
 [计算机网络](https://lqmx.github.io/data/html/computer_network)
 
-# 面试
+## 面试
 
 [InterviewNote 重构](https://lqmx.github.io/data/html/in_restructure)
 
-# 歌词
+## 歌词
 
 [水星记](https://lqmx.github.io/data/html/shuixingji)
 
@@ -118,14 +120,18 @@
 
 [保留](https://lqmx.github.io/data/html/baoliu)
 
-# 游戏
+## 游戏
 
 [旅行青蛙](https://lqmx.github.io/data/html/lvxingqingwa)
 
-# 简介
+## 简介
 
 [README](https://lqmx.github.io/data/html/README)
 
+## 其他
+
+[数据结构 树](https://lqmx.github.io/data/html/tree)
 
 
-###### 2018.03.13
+
+###### 2018.03.18
