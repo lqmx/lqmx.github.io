@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="update_time" content="1521982189">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>说说http webserver fastcgi php-fpm</title>
+    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1521982189">
+    <link rel="stylesheet" href="../../css/reset.css?v1521982189">
+    <link rel="stylesheet" href="../../css/md.css?v1521982189">
+    <link rel="stylesheet" href="../../css/module.css?v1521982189">
+    <link rel="stylesheet" href="../../css/c.css?v1521982189">
+    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1521982189">
+    <script src="../../dep/require.js?1521982189"></script>
+</head>
+<body>
+    <div class="md"><h1>说说http/webserver/fastcgi/php-fpm</h1>
+<h6>2018.03.19</h6>
+<h2>HTTP请求</h2>
+<p>用户打开浏览器输入url地址后到最终页面呈现过程:</p>
+<ol>
+<li>用户输入http://www.baidu.com</li>
+<li>浏览器解析主机名</li>
+<li>浏览器查询这个主机名ip地址(dns解析)并获得端口</li>
+<li>浏览器向ip和端口发起连接(tcp首次握手)</li>
+<li>浏览器向服务器发送一条http get或post提交</li>
+<li>浏览器从服务器读取http响应报文</li>
+<li>浏览器关闭连接</li>
+</ol>
+<h2>web服务器</h2>
+<p>用来表示web服务器的软件,也可以表示提供web页面的特定设备</p>
+<p>web服务器核心步骤</p>
+<ol>
+<li>接收客户端连接,或者拒绝该客户端的连接并将其关闭</li>
+<li>接收请求,从网络中读取一条http请求报文并解析</li>
+<li>处理请求,对请求报文进行解析</li>
+<li>访问资源,访问报文中指定的资源</li>
+<li>创建http响应报文,并回送给客户端</li>
+<li>记录事务处理过程,log</li>
+</ol>
+<h2>FastCGI和php-fpm</h2>
+<p>CGI:为了保证web server传递过来的数据是标准格式的,它是一个协议,
+方便CGI程序的编写者,FastCGI是CGI更高级的一种方式,用来提高CGI
+程序性能</p>
+<p>web server只是内容的分发者。</p>
+<p>当请求为<code class="inline-code">/index.php</code>,nginx需要找PHP解析器来处理,此时CGI便是规定了要传
+什么数据/以什么格式传输给PHP解析器的协议</p>
+<p>CGI针对每个http请求都是fork一个新进程来进行处理,处理过程包括解析php.ini文件,初始化
+执行环境等,然后每个进程会把处理完的数据返回给web服务器,最后web服务器把内容发送给用户,
+刚才fork的进程也随之退出,如果下次用户还请求动态资源,那么会重新fork一个新进程,周而复始。</p>
+<p>FastCGI则会先fork一个master,解析配置文件,初始化执行环境,然后在fork多个worker。
+当请求过来时,master会传递给一个worker,然后立即可以接受下一个请求。</p>
+<p>php-fpm是一个实现了FastCGI协议的程序,用来管理FastCGI起的进程,能够调度php-cgi进程的程序。</p>
+<ul>
+<li>CGI：是 Web Server 与 Web Application 之间数据交换的一种协议。</li>
+<li>FastCGI：同 CGI，是一种通信协议，但比 CGI 在效率上做了一些优化。同样，SCGI 协议与 FastCGI 类似。</li>
+<li>PHP-CGI：是 PHP （Web Application）对 Web Server 提供的 CGI 协议的接口程序。</li>
+<li>PHP-FPM：是 PHP（Web Application）对 Web Server 提供的 FastCGI 协议的接口程序，额外还提供了相对智能一些任务管理</li>
+</ul>
+<h2>参考</h2>
+<ul>
+<li><a href="http://www.lxlxw.me/?p=216">说说http/webserver/fastcgi/php-fpm</a></li>
+<li><a href="https://www.awaimai.com/371.html">CGI、FastCGI和PHP-FPM关系图解</a></li>
+</ul>
+<h6>2018.03.25</h6></div>
+<script >
+    requirejs(['../../js/conf/r'], function(rc) {
+        requirejs(['../js/html']);
+    });
+</script>
+</body>
+</html>

@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="update_time" content="1521381589">
+    <meta name="update_time" content="1521382600">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>算法之美 排序</title>
-    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1521381589">
-    <link rel="stylesheet" href="../../css/reset.css?v1521381589">
-    <link rel="stylesheet" href="../../css/md.css?v1521381589">
-    <link rel="stylesheet" href="../../css/module.css?v1521381589">
-    <link rel="stylesheet" href="../../css/c.css?v1521381589">
-    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1521381589">
-    <script src="../../dep/require.js?1521381589"></script>
+    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1521382600">
+    <link rel="stylesheet" href="../../css/reset.css?v1521382600">
+    <link rel="stylesheet" href="../../css/md.css?v1521382600">
+    <link rel="stylesheet" href="../../css/module.css?v1521382600">
+    <link rel="stylesheet" href="../../css/c.css?v1521382600">
+    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1521382600">
+    <script src="../../dep/require.js?1521382600"></script>
 </head>
 <body>
     <div class="md"><h1>第十一章 排序</h1>
@@ -49,7 +49,7 @@
 当数据量大又运行使用较多的附加空间时选择桶排序。
 当要在已排序数据上增加若干新数据时选择插入排序。</p>
 <h2>11.2 插入排序</h2>
-<blockquote class="bq3">
+<blockquote class="bq6">
 <p>每次将一个带排序数据对象按关键码大小插入一个有序的数据序列中,得到一个新的容量加1的数据序列,
 如此往复直到全部对象插入完毕为止</p>
 </blockquote>
@@ -102,7 +102,7 @@
         return $data;
     }</code></pre>
 <h2>11.3 选择排序</h2>
-<blockquote class="bq3">
+<blockquote class="bq6">
 <p>在排序时每次选择最小项或最大项,将其放入适当位置,以此类推。</p>
 </blockquote>
 <h3>11.3.1 直接选择排序</h3>
@@ -150,7 +150,7 @@ function heapSort($data) {
         return $data;
     }</code></pre>
 <h2>11.4 交换排序</h2>
-<blockquote class="bq3">
+<blockquote class="bq6">
 <p>两两比较待排序对象的关键码,如果发生逆序就交换,知道所有对象都排序完毕</p>
 </blockquote>
 <h3>11.4.1 冒泡排序</h3>
@@ -183,7 +183,7 @@ function heapSort($data) {
                     $shift = $i;
                 }
             }
-            $left = $i;
+            $left = $shift;
         }
         return $data;
     }</code></pre>

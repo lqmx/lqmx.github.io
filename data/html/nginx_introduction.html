@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="update_time" content="1521982189">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Nginx 入门简介</title>
+    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1521982189">
+    <link rel="stylesheet" href="../../css/reset.css?v1521982189">
+    <link rel="stylesheet" href="../../css/md.css?v1521982189">
+    <link rel="stylesheet" href="../../css/module.css?v1521982189">
+    <link rel="stylesheet" href="../../css/c.css?v1521982189">
+    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1521982189">
+    <script src="../../dep/require.js?1521982189"></script>
+</head>
+<body>
+    <div class="md"><h1>Nginx 入门简介</h1>
+<h6>2018.03.19</h6>
+<h2>关于</h2>
+<p>Nginx是一款轻量级的Web服务器/反向代理服务器及电子邮件(IMAP/POP3)代理服务器,其特点是
+占用内存少,并发能力强。</p>
+<h2>背景介绍</h2>
+<h3>什么是Nginx</h3>
+<p>俄罗斯人Igor Sysoev开发</p>
+<p>Nginx是一个高性能的HTTP和反向代理服务器,同时也是一个IMAP/POP3/SMTP代理服务器。</p>
+<p>Nginx以事件驱动的方式编写,所以有非常好的性能,同时也是一个非常高效的反向代理、负载平衡。</p>
+<h3>Nginx特点</h3>
+<ul>
+<li>处理静态文件、索引文件以及自动索引;打开文件描述符缓冲</li>
+<li>无缓存的反向代理加速,简单的负载均衡和容错</li>
+<li>FastCGI,简单的负载均衡和容错</li>
+<li>模块化的结构。包括gzipping,byte ranges,chunked responses,以及SSI-filter等filter。
+如果由FastCGI或其他代理服务器处理单页中存在的多个SSI,则这项处理可以并行运行,而不需要相互等待。</li>
+<li>支持SSL和TLSSNI</li>
+</ul>
+<p>Nginx专为性能优化而开发,注重效率,支持内核poll模型。</p>
+<p>Nginx具有很高的稳定性。采取分阶段资源分配技术,使得它的CPU与内存占用率非常低。</p>
+<p>Nginx支持热部署。</p>
+<p>Nginx采用master-slave模型,能够充分利用SMP的优势,且能够减少工作进程在磁盘IO的阻塞延迟。</p>
+<h2>参考</h2>
+<ul>
+<li><a href="http://wiki.jikexueyuan.com/project/nginx/overwise.html">极客学院-Nginx入门简介</a></li>
+</ul>
+<h6>2018.03.25</h6></div>
+<script >
+    requirejs(['../../js/conf/r'], function(rc) {
+        requirejs(['../js/html']);
+    });
+</script>
+</body>
+</html>

@@ -46,6 +46,8 @@
 
 [PHP核心技术与最佳实践 第十章 Redis使用与实践](https://lqmx.github.io/data/html/php_core_technology_and_best_practice_10)
 
+[PHP底层的运行机制与原理](https://lqmx.github.io/data/html/php_principle_1)
+
 ## JS
 
 [RequireJs学习笔记](https://lqmx.github.io/data/html/requirejs)
@@ -132,6 +134,18 @@
 
 [数据结构 树](https://lqmx.github.io/data/html/tree)
 
+## 其他
+
+[说说http webserver fastcgi php-fpm](https://lqmx.github.io/data/html/http_webserver_fastcgi_phpfpm)
+
+## 其他
+
+[Linux下select, poll和epoll IO模型](https://lqmx.github.io/data/html/select_poll_epoll)
+
+## 其他
+
+[Nginx 入门简介](https://lqmx.github.io/data/html/nginx_introduction)
 
 
-###### 2018.03.18
+
+###### 2018.03.25
