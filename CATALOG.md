@@ -48,6 +48,12 @@
 
 [PHP底层的运行机制与原理](https://lqmx.github.io/data/html/php_principle_1)
 
+[PHP中一些奇怪的现象和技巧](https://lqmx.github.io/data/html/php_case)
+
+[深入理解PHP内核 第二章 用户代码的执行](https://lqmx.github.io/data/html/tipi_2)
+
+[深入理解PHP内核 第六章 内存管理](https://lqmx.github.io/data/html/tipi_6)
+
 ## JS
 
 [RequireJs学习笔记](https://lqmx.github.io/data/html/requirejs)
@@ -148,4 +154,4 @@
 
 
 
-###### 2018.03.25
+###### 2018.03.26
