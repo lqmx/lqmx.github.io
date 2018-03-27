@@ -2,31 +2,153 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="update_time" content="1522078208">
+    <meta name="update_time" content="1522157513">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>深入理解PHP内核 第六章 内存管理</title>
-    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1522078208">
-    <link rel="stylesheet" href="../../css/reset.css?v1522078208">
-    <link rel="stylesheet" href="../../css/md.css?v1522078208">
-    <link rel="stylesheet" href="../../css/module.css?v1522078208">
-    <link rel="stylesheet" href="../../css/c.css?v1522078208">
-    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1522078208">
-    <script src="../../dep/require.js?1522078208"></script>
+    <link rel="shortcut icon" type="images/x-icon" href="/favicon.png?v1522157513">
+    <link rel="stylesheet" href="../../css/reset.css?v1522157513">
+    <link rel="stylesheet" href="../../css/md.css?v1522157513">
+    <link rel="stylesheet" href="../../css/module.css?v1522157513">
+    <link rel="stylesheet" href="../../css/c.css?v1522157513">
+    <link rel="stylesheet" href="../../dep/highlight/style/monokai_sublime.css?v1522157513">
+    <script src="../../dep/require.js?1522157513"></script>
 </head>
 <body>
     <div class="md"><h1>深入理解PHP内核 第六章 内存管理</h1>
 <h6>2018.03.26</h6>
+<p>内存是计算机非常关键的部件之一，是暂时存储程序以及数据的空间，CPU只有有限的寄存器可以用于存储计算数据，而大部分的数据都是存储在内存中的，程序运行都是在内存中进行的。和CPU计算能力一样，内存也是决定计算效率的一个关键部分</p>
+<p>计算中的资源中主要包含：CPU计算能力，内存资源以及I/O。</p>
+<p>内存管理的主要工作是尽可能高效的利用内存。</p>
 <h2>第一节 内存管理概述</h2>
+<h3>操作系统的内存管理</h3>
+<p>操作系统直接管理着内存，所以操作系统也需要进行内存管理，内存管理是如此之重要，计算机中通常都有内存管理单元(MMU)用于处理CPU对内存的访问。</p>
+<h3>应用层的内存管理</h3>
+<p>鉴于系统调用的开销，一些对性能有要求的应用通常会自己在用户态进行内存管理，例如第一次申请稍大的内存留着备用，而使用完释放的内存并不是马上归还给操作系统，可以将内存进行复用，这样可以避免多次的内存申请和释放所带来的性能消耗。</p>
+<p>PHP不需要显式的对内存进行管理，这些工作都由Zend引擎进行管理了。PHP内部有一个内存管理体系，它会自动将不再使用的内存垃圾进行释放，这部分的内容后面的小节会介绍到。</p>
+<h3>PHP中内存相关的功能特性</h3>
+<pre><code class="language-log" data-comment="">Fatal error: Allowed memory size of X bytes exhausted (tried to allocate Y bytes)</code></pre>
+<p>这个错误的信息很明确，PHP已经达到了允许使用的最大内存了，通常上来说这很有可能是我们的程序编写的有些问题。比如：一次性读取超大的文件到内存中，或者出现超大的数组，或者在大循环中的没有及时是放掉不再使用的变量，这些都有可能会造成内存占用过大而被终止。</p>
+<p>PHP默认的最大内存使用大小是32M, 如果你真的需要使用超过32M的内存可以修改php.ini配置文件的如下配置:</p>
+<pre><code class="language-ini" data-comment="">memory_limit = 32M</code></pre>
+<p>如果你无法修改php配置文件，如果你的PHP环境没有禁用ini_set()函数，也可以动态的修改最大的内存占用大小:</p>
+<pre><code class="language-php" data-comment="">&lt;?php
+ini_set("memory_limit", "128M");</code></pre>
+<ul>
+<li><code class="inline-code">memory_get_usage()</code>，这个函数的作用是获取目前PHP脚本所用的内存大小。</li>
+<li><code class="inline-code">memory_get_peak_usage()</code>，这个函数的作用返回当前脚本到目前位置所占用的内存峰值，这样就可能获取到目前的脚本的内存需求情况。</li>
+</ul>
+<p>前面之所以会说把变量unset掉时候_可能_会把它释放掉的原因是： 在PHP中为了避免不必要的内存复制，采用了引用计数和写时复制的技术， 所以这里unset只是将引用关系打破，如果还有其他变量指向该内存， 它所占用的内存还是不会被释放的。
+当然这还有一种情况：出现循环引用，这个就得靠gc来处理了， 内存不会当时就是放，只有在gc环节才会被释放。</p>
 <h2>第二节 PHP中的内存管理</h2>
-<h2>第三节 内存使用:申请和销毁</h2>
+<p>内存管理一般会包括以下内容：</p>
+<ul>
+<li>是否有足够的内存供我们的程序使用；</li>
+<li>如何从足够可用的内存中获取部分内存；</li>
+<li>对于使用后的内存，是否可以将其销毁并将其重新分配给其它程序使用。</li>
+</ul>
+<p>PHP的内存管理可以被看作是分层（hierarchical）的。它分为三层：<strong>存储层（storage）</strong>、<strong>堆层（heap）</strong> 和<strong>接口层（emalloc/efree）</strong>。</p>
+<p>PHP在存储层共有4种内存分配方案: malloc，win32，mmap_anon，mmap_zero，默认使用malloc分配内存</p>
+<p>PHP内存管理器</p>
+<p><img src="../img/tipi_6.1.jpg" alt="" class="" /></p>
+<p>接口层是一些宏定义。</p>
+<p>在接口层下面是PHP内存管理的核心实现，我们称之为heap层。这个层控制整个PHP内存管理的过程</p>
+<p>PHP中的内存管理主要工作就是维护三个列表：小块内存列表（free_buckets）、大块内存列表（large_free_buckets）和剩余内存列表（rest_buckets）。</p>
+<h2>第三节 内存使用：申请和销毁</h2>
+<h3>内存的申请</h3>
+<p>ZendMM向系统进行的内存申请，并不是有需要时向系统即时申请，而是由ZendMM的最底层（heap层）先向系统申请一大块的内存，通过对上面三种列表的填充，建立一个类似于内存池的管理机制。</p>
+<p>ZendMM对内存分配的处理主要有以下步骤</p>
+<ol>
+<li>内存检查。 对要申请的内存大小进行检查，如果太大（超出memory_limit则报 Out of Memory）;</li>
+<li>如果命中缓存，使用fastcache得到内存块(详见第五节)，然后直接进行第5步;</li>
+<li>在ZendMM管理的heap层存储中搜索合适大小的内存块, 在这一步骤ZendMM通过与ZEND_MM_MAX_SMALL_SIZE进行大小比较，把内存请求分为两种类型： large和small。small类型的的请求会先使用zend_mm_low_bit函数在mm_heap中的free_buckets中查找，未找到则使用与large类型相同的方式：使用zend_mm_search_large_block函数在“大块”内存（_zend_mm_heap-&gt;large_free_buckets）中进行查找。如果还没有可以满足大小需求的内存，最后在rest_buckets中进行查找。也就是说，内存的分配是在三种列表中小到大进行的。找到可以使用的block后，进行第5步;</li>
+<li>如果经过第3步的查找还没有找到可以使用的资源（请求的内存过大），需要使用ZEND_MM_STORAGE_ALLOC函数向系统再申请一块内存（大小至少为ZEND_MM_SEG_SIZE），然后直接将对齐后的地址分配给本次请求。跳到第6步;</li>
+<li>使用zend_mm_remove_from_free_list函数将已经使用block节点在zend_mm_free_block中移除;</li>
+<li>内存分配完毕，对zend_mm_heap结构中的各种标识型变量进行维护，包括large_free_buckets， peak，size等;</li>
+<li>返回分配的内存地址;</li>
+</ol>
+<h3>内存的销毁</h3>
+<p>ZendMM在内存销毁的处理上采用与内存申请相同的策略，当程序unset一个变量或者是其他的释放行为时，ZendMM并不会直接立刻将内存交回给系统，而是只在自身维护的内存池中将其重新标识为可用，按照内存的大小整理到上面所说的三种列表（small,large,free）之中，以备下次内存申请时使用。</p>
 <h2>第四节 垃圾回收</h2>
+<p>垃圾回收机制是一种动态存储分配方案。它会自动释放程序不再需要的已分配的内存块。自动回收内存的过程叫垃圾收集。</p>
+<p>在PHP5.3版本之前，PHP只有简单的基于引用计数的垃圾回收，当一个变量的引用计数变为0时，PHP将在内存中销毁这个变量，只是这里的垃圾并不能称之为垃圾。</p>
+<p>随着PHP的发展，PHP开发者的增加以及其所承载的业务范围的扩大，在PHP5.3中引入了更加完善的垃圾回收机制。新的垃圾回收机制解决了无法处理循环的引用内存泄漏问题。</p>
+<p>PHP5.3中的垃圾回收机制使用了文章引用计数系统中的同步周期回收(Concurrent Cycle Collection in Reference Counted Systems)中的同步算法。</p>
 <h3>新的垃圾回收</h3>
+<p>在PHP中，主要的内存管理手段是引用计数，引入垃圾收集机制的目的是为了打破引用计数中的循环引用，从而防止因为这个而产生的内存泄露。</p>
+<p>垃圾收集机制基于PHP的动态内存管理而存在。PHP5.3为引入垃圾收集机制，在变量存储的基本结构上有一些变动</p>
+<pre><code class="language-c" data-comment="">struct _zval_struct {
+    /* Variable information */
+    zvalue_value value;     /* value */
+    zend_uint refcount__gc;
+    zend_uchar type;    /* active type */
+    zend_uchar is_ref__gc;
+};</code></pre>
+<ul>
+<li>如果变量的引用计数为1，即减一后引用计数为0，直接清除变量。如果当前变量如果被缓存，则需要清除缓存</li>
+<li>如果变量的引用计数大于1，即减一后引用计数大于0，则将变量放入垃圾列表。如果变更存在引用，则去掉其引用。</li>
+</ul>
+<p>PHP的垃圾回收机制在执行过程中以四种颜色标记状态。</p>
+<ul>
+<li>GC_WHITE 白色表示垃圾</li>
+<li>GC_PURPLE 紫色表示已放入缓冲区</li>
+<li>GC_GREY 灰色表示已经进行了一次refcount的减一操作</li>
+<li>GC_BLACK 黑色是默认颜色，正常</li>
+</ul>
 <h2>第五节 内存管理中的缓存</h2>
+<blockquote class="bq4">
+<p>凡是位于速度相差较大的两种硬件之间的，用于协调两者数据传输速度差异的结构，均可称之为Cache。</p>
+</blockquote>
+<p>PHP将缓存添加到内存管理机制中做了如下一些操作：</p>
+<ul>
+<li>标识缓存和缓存的大小限制，即何时使用缓存，在某些情况下可以以最少的修改禁用掉缓存</li>
+<li>缓存的存储结构，即缓存的存放位置、结构和存放的逻辑</li>
+<li>初始化缓存</li>
+<li>获取缓存中内容</li>
+<li>写入缓存</li>
+<li>释放缓存或者清空缓存列表</li>
+</ul>
 <h2>第六节 写时复制</h2>
-<h2>第七节 内存泄漏</h2>
+<blockquote class="bq4">
+<p>写时复制（Copy on Write，也缩写为COW)的应用场景非常多， 比如Linux中对进程复制中内存使用的优化，在各种编程语言中，如C++的STL等等中均有类似的应用。 COW是常用的优化手段，可以归类于：资源延迟分配。只有在真正需要使用资源时才占用资源， 写时复制通常能减少资源的占用。</p>
+</blockquote>
+<h3>推迟内存复制的优化</h3>
+<p>PHP中的COW可以简单描述为：如果通过赋值的方式赋值给变量时不会申请新内存来存放新变量所保存的值，而是简单的通过一个计数器来共用内存，只有在其中的一个引用指向变量的值发生变化时才申请新空间来保存值内容以减少对内存的占用。</p>
+<p>即使我们不使用引用，一个变量被赋值后，只要我们不改变变量的值 ，也不会新申请内存用来存放数据。据此我们很容易就可以想到一些COW可以非常有效的控制内存使用的场景：只是使用变量进行计算而很少对其进行修改操作，如函数参数的传递，大数组的复制等等等不需要改变变量值的情形。</p>
+<h3>复制分离变化的值</h3>
+<p>COW的粒度为zval结构，由PHP中变量全部基于zval，所以COW的作用范围是全部的变量，而对于zval结构体组成的集合（如数组和对象等），在需要复制内存时，将复杂对象分解为最小粒度来处理。这样可以使内存中复杂对象中某一部分做修改时，不必将该对象的所有元素全部“分离复制”出一份内存拷贝；</p>
+<h3>实现写时复制</h3>
+<pre><code class="language-php" data-comment="">&lt;?php  //例四
+    $foo = 1;
+    xdebug_debug_zval('foo');
+    $bar = $foo;
+    xdebug_debug_zval('foo');
+    $bar = 2;
+    xdebug_debug_zval('foo');
+?&gt;
+//-----执行结果-----
+foo: (refcount=1, is_ref=0)=1
+foo: (refcount=2, is_ref=0)=1
+foo: (refcount=1, is_ref=0)=1</code></pre>
+<h3>慎用引用<strong>&amp;</strong></h3>
+<p>引用和前面提到的变量的引用计数和PHP中的引用并不是同一个东西，引用和C语言中的指针的类似，他们都可以通过不同的标示访问到同样的内容，但是PHP的引用则只是简单的变量别名，没有C指令的灵活性和限制。</p>
+<p>PHP中有非常多让人觉得意外的行为，有些因为历史原因，不能破坏兼容性而选择暂时不修复，或者有的使用场景比较少。</p>
+<pre><code class="language-php" data-comment="">&lt;?php
+$foo['love'] = 1;
+$bar  = &amp;$foo['love'];
+$tipi = $foo;
+$tipi['love'] = '2';
+echo $foo['love']; //  2 </code></pre>
+<p><code class="inline-code">$bar</code>变量的引用操作，将<code class="inline-code">$foo['love']</code>污染变成了引用，从而Zend没有对<code class="inline-code">$tipi['love']</code>的修改产生内存的复制分离。</p>
+<h2>第七节 内存泄露</h2>
+<h3>PHP的内存泄漏</h3>
+<h3>内存泄漏的debug及工具</h3>
+<h4>PHP内置内存泄漏探测</h4>
+<h4>valgrind辅助法</h4>
+<h3>PHP的unclean shutdown</h3>
 <h2>第八节 小结</h2>
-<h6>2018.03.26</h6></div>
+<p>PHP内核以接口的方式提供了内存管理，将内存管理对PHP内核的其它模块透明，从而提供更加高效的内存管理，减少内存碎片。</p>
+<h6>2018.03.27</h6></div>
 <script >
     requirejs(['../../js/conf/r'], function(rc) {
         requirejs(['../js/html']);
